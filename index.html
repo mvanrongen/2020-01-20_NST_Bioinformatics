@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Alexia Cardona" />
+<meta name="author" content="Martin van Rongen" />
 
 
-<title>Introduction to R for Biologists</title>
+<title>Introduction to R</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -295,6 +294,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -323,6 +323,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -430,16 +436,16 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Introduction to R for Biologists</h1>
-<h4 class="author">Alexia Cardona</h4>
-<h4 class="date">5-6 November 2019</h4>
+<h1 class="title toc-ignore">Introduction to R</h1>
+<h4 class="author">Martin van Rongen</h4>
+<h4 class="date">20 January 2020 (15:00 - 17:00) and 03 February 2020 (15:00 - 17:00)</h4>
 
 </div>
 
 
 <p><br/></p>
 <p>Bioinformatics Training Facility</p>
-<p><strong>Instructors:</strong> Alexia Cardona, Celine Labouesse, Martin van Rongen</p>
+<p><strong>Instructors:</strong> Martin van Rongen</p>
 <p><br/></p>
 <div id="description" class="section level3">
 <h3>Description</h3>
@@ -521,7 +527,7 @@ div.tocify {
 <ul>
 <li>Follow the instructions for your distribution from <a href="https://cloud.r-project.org/bin/linux">CRAN</a>, they provide information to get the most recent version of R for common distributions. For most distributions, you could use your package manager (e.g., for Debian/Ubuntu run <code>sudo apt-get install r-base</code>, and for Fedora <code>sudo yum install R</code>), but we don’t recommend this approach as the versions provided by this are usually out of date. In any case, make sure you have at least R 3.3.1.</li>
 <li>Go to the <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio download page</a></li>
-<li>Under <em>Installers</em> select the version that matches your distribution, and install it with your preferred method (e.g., with Debian/Ubuntu <code>sudo dpkg -i rstudio-x.yy.zzz-amd64.deb</code> at the terminal).</li>
+<li>Under <em>Installers</em> select the version that matches your distribution, and install it with your preferred method (e.g., with Debian/Ubuntu <code>sudo dpkg -i   rstudio-x.yy.zzz-amd64.deb</code> at the terminal).</li>
 <li>Once it’s installed, open RStudio to make sure it works and you don’t get any error messages.</li>
 </ul>
 </div>
@@ -537,7 +543,7 @@ div.tocify {
 </div>
 <div id="contributors" class="section level3">
 <h3>Contributors</h3>
-<p>This course has been created by Alexia Cardona by adapting and adding new content to the <a href="http://datacarpentry.org/R-ecology-lesson/">Data Carpentry lesson in Ecology</a>:</p>
+<p>This course has originally been created by Alexia Cardona. It has been adapted to suit these practicals by Martin van Rongen. The materials are based on the original <a href="http://datacarpentry.org/R-ecology-lesson/">Data Carpentry lesson in Ecology</a>:</p>
 <p>Michonneau F, Teal T, Fournier A, Seok B, Obeng A, Pawlik AN, Conrado AC, Woo K, Lijnzaad P, Hart T, White EP, Marwick B, Bolker B, Jordan KL, Ashander J, Dashnow H, Hertweck K, Cuesta SM, Becker EA, Guillou S, Shiklomanov A, Klinges D, Odom GJ, Jean M, Mislan KAS, Johnson K, Jahn N, Mannheimer S, Pederson S, Pletzer A, Fouilloux A, Switzer C, Bahlai C, Li D, Kerchner D, Rodriguez-Sanchez F, Rajeg GPW, Ye H, Tavares H, Leinweber K, Peck K, Lepore ML, Hancock S, Sandmann T, Hodges T, Tirok K, Jean M, Bailey A, von Hardenberg A, Theobold A, Wright A, Basu A, Johnson C, Voter C, Hulshof C, Bouquin D, Quinn D, Vanichkina D, Wilson E, Strauss E, Bledsoe E, Gan E, Fishman D, Boehm F, Daskalova G, Tavares H, Kaupp J, Dunic J, Keane J, Stachelek J, Herr JR, Millar J, Lotterhos K, Cranston K, Direk K, Tylén K, Chatzidimitriou K, Deer L, Tarkowski L, Chiapello M, Burle M, Ankenbrand M, Czapanskiy M, Moreno M, Culshaw-Maurer M, Koontz M, Weisner M, Johnston M, Carchedi N, Burge OR, Harrison P, Humburg P, Pauloo R, Peek R, Elahi R, Cortijo S, sfn_brt, Umashankar S, Goswami S, Sumedh, Yanco S, Webster T, Reiter T, Pearse W, Li Y (2019). “datacarpentry/R-ecology-lesson: Data Carpentry: Data Analysis and Visualization in R for Ecologists, June 2019.” doi: 10.5281/zenodo.3264888, <a href="http://datacarpentry.org/R-ecology-lesson/" class="uri">http://datacarpentry.org/R-ecology-lesson/</a>.</p>
 </div>
 
