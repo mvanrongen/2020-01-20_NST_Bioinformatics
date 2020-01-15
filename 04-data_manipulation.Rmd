@@ -116,17 +116,18 @@ The `sex` column is a character and thus needs to be quoted, whereas the `year` 
 
 >### Challenge 2 - plotting subset with different colour
 >
->Plot all the animals in the `surveys_complete` dataset as `weight` (x-axis) against `hindfoot_length` (y-axis).  Use the dataset created above which contains only the animals that were collected on and after 1995 and highlight these points in red in the plot.
+>Plot all the animals in the `surveys_complete` dataset as `weight` (x-axis) against `hindfoot_length` (y-axis).  Use the dataset created above which contains only the animals that were collected on and after 1995 and highlight these points in red in the plot. **Hint**: create a new object called `survey_recent` that contains the dataset created above.
 >
 >```{r, answer=TRUE, eval=TRUE}
 >survey_recent <- surveys_complete %>%
                   select(species_id, weight, hindfoot_length, year, sex) %>%
                   filter(year >= 1995)
+>                  
 >ggplot(mapping = aes(x = weight, y = hindfoot_length)) +
 >  geom_point(data = surveys_complete) +
 >  geom_point(data = survey_recent, colour = "red")
 >```
->**Note:** In the example above we did not specify the `data` argument in the `ggplot` function because the arguments in the `ggplot` function should be common throughout the whole plot.  In this case we specified the respective data as separate layers in 2 different `geom_point` plots; the first plot is the data with all the animals in `surveys_complete` (points in black), the second plot is layered on top of the first plot which is a subset of the `surveys_complete` dataset (points in red).
+>**Note:** In the example above we did not specify the `data` argument in the `ggplot` function because the arguments in the `ggplot` function should be common throughout the whole plot.  In this case we specified the respective data as separate layers in 2 different `geom_point` plots; the first plot is the data with all the animals in `surveys_complete` (points in black), the second plot is layered on top of the first plot and is a subset of the `surveys_complete` dataset (points in red).
 
 <br/>
 
