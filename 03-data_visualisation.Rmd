@@ -16,7 +16,8 @@ suppressWarnings(surveys$date <- lubridate::ymd(paste(surveys$year,
 
 <img src="img/ggplot2.png" width="50"/>
 
-Visualising is probably one of the most satisfying parts of doing data analysis, after all most people probably like a nice graph! Thankfully tidyverse makes this very easy for us, using the **`ggplot2`** package. We will be using this package to create some plots.  `ggplot2` is a very popular package used for plotting mainly due to its simple, modular way to create plots from tabular data.  
+Visualising is probably one of the most satisfying parts of doing data analysis. After all, who doesn't like a nice plot? In tidyverse plotting is made very easy for us, using the **`ggplot2`** package.
+`ggplot2` is a very popular package used for plotting mainly due to its simple, modular way to create plots from tabular data.  
 
 To create a plot, we will use the following basic template. 
 ```
@@ -132,12 +133,12 @@ surveys_plot
 
 ## Saving a plot to a file {#saveplot}
 
-To save a plot to file use the `ggsave` function.  If you look at the [documentation of ggsave](https://ggplot2.tidyverse.org/reference/ggsave.html) you can see the different arguments the ggsave function takes.  Let us save the plot present in the surveys_plot variable into a file called `plot_weight_hindfoot_density2d.png` into a folder in this project called `img_output`.  
+To save a plot to file use the `ggsave` function.  If you look at the [documentation of ggsave](https://ggplot2.tidyverse.org/reference/ggsave.html) you can see the different arguments the ggsave function takes.  Let us save the plot present in the surveys_plot variable into a file called `plot_weight_hindfoot_density2d.png` into a folder in this project called `img_output` (check that it is present, if not you need to create it).  
 ```{r, warning=FALSE, message=FALSE}
 #save plot that you would like to save into a variable
 out_plot <- surveys_plot + geom_density2d()
 #save plot to file
-ggsave(filename="img_output/plot_weight_hindfoot_density2d.png", plot = out_plot)
+ggsave(filename = "img_output/plot_weight_hindfoot_density2d.png", plot = out_plot)
 ```
 
 >**Note**
@@ -147,11 +148,7 @@ ggsave(filename="img_output/plot_weight_hindfoot_density2d.png", plot = out_plot
 ># Save plot to file
 >ggsave(filename = "img_output/plot_weight_hindfoot_density2d.png")
 >```
->
->- You can create folders straight from RStudio from the right bottom pane in the Files section > New Folder icon.
->
-><img src="img/new_folder.png" width="200"/>
-
+>Alternatively, you can go to the Plots pane and click on the **Export** button. This can be easy, but makes the output less reproducible for other people.
 <br/>
 
 

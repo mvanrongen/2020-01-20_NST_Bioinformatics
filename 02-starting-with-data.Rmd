@@ -46,12 +46,15 @@ To be able to do proper data analyses, it is crucial you understand your data. S
 Thinking back to the structure of our R project, we have a working directory. Within the working directory we can create folders to organise our files.
 We are going to download some raw data and it is good practice to keep your raw data separate from other data, because that way you can always refer back to the data that you started with.
 
-In this case **we have generated the relevant folders for you**, but in case you would want to do this yourself in the future, you could do something along the following:
+In this case **we have generated the relevant folders for you**, but in case you would want to do this yourself in the future, you could do the following:
 
-Let's create a directory called `data_raw` within our working directory. If you are not sure that you are in your working directory, click on the cog symbol with **More** next to it in the bottom right panel and select **Go to working directory**.
+You can create folders straight from RStudio from the right bottom pane in the Files section > New Folder icon.
 
-Next, click on **New Folder** and create a folder called `data_raw`. **Note:** Remember that R is case-sensitive, so be consistent. Also, it is best to avoid spaces in names, hence the underscore between `data` and `raw`.
+<img src="img/new_folder.png" width="200"/>
 
+Remember to try and avoid capitalisation and spaces (use the underscore instead).
+
+<br />
 
 We are now ready to download the data, using the R function `download.file()` to download the CSV file that contains the data.  
 ```{r, eval=FALSE, purl=TRUE}

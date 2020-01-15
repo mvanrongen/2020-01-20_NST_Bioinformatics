@@ -25,28 +25,56 @@ In most of the cases you will need to change the format of your dataset because 
 
 <br/>
 
+## Pipes
+Before we move onto the different ways that we can transform our data, we'll discuss one of the most powerful additions to R, **pipes**.
+
+Pipes let you take the output of one function and send it directly to the next, which is useful when you need to do many things to the same dataset.  Pipes in R look like
+`%>%` and are made available via the **`magrittr`** package, installed automatically
+with `dplyr`. 
+
+Let's say we are interested only in the data that do not contain any missing values. Using pipes, we do the following:
+```{r, eval=FALSE}
+surveys %>%
+  drop_na()
+```
+
+This takes the argument on the left (`surveys`) and passes it on to the function after it (`drop_na`, which removes all rows with missing values).
+
+If we want to create a new object with the transformed data we can assign it a new name as below:
+
+```{r, eval=TRUE}
+surveys_complete <- surveys %>%
+                  drop_na()
+
+surveys_complete
+```
+
+Although at this point pipes might not seem like a revolutionary invention, they become more powerful when combining multiple operations. This we'll see next.
+
 ## Selecting columns
 
 To select columns of a data frame or tibble, use the`select` function. The first argument
-is the data frame or tibble you are working on (in our example it is `surveys`), and the subsequent arguments are the columns to keep.
+is the data frame or tibble you are working on (in our example it is `surveys`, which we pipe through), and the subsequent arguments are the columns to keep.
 
 ```{r, eval=FALSE}
 # Extract species_id, weight, hindfoot_lenth, year and sex columns from surveys dataset.
-select(surveys, species_id, weight, hindfoot_length, year, sex)
+surveys %>% 
+  select(species_id, weight, hindfoot_length, year, sex)
 ```
 
 To select all columns *except* certain ones, put a `-` in front of the column to exclude it.
 
 ```{r, eval=FALSE}
 # Select all columns of the surveys dataset apart from record_id and species_id columns.
-select(surveys, -record_id, -species_id)
+surveys %>%
+  select(-record_id, -species_id)
 ```
 
 <br/>
 
 ## Filtering rows
 
-To remove rows from a data frame or tibble use the `filter` function from the `dplyr` package.  The first argument is the data frame or tibble to perform the filtering on and the next arguments are the conditions on which to keep the rows. 
+To remove rows from a data frame or tibble use the `filter` function from the `dplyr` package.  The first argument is the data frame or tibble to perform the filtering on (in this case we pipe the data through) and the next arguments are the conditions on which to keep the rows. 
 
 ### Filtering rows by values
 
@@ -54,124 +82,20 @@ To choose rows based on a specific condition, use the `filter` function as follo
 
 ```{r, eval=FALSE}
 # Keep only the observations of animals collected from 1995 onwards from the surveys dataset.
-filter(surveys, year >= 1995)
+surveys %>% 
+  filter(year >= 1995)
 ```
 
 You can filter on multiple conditions:
 ```{r, eval=FALSE}
 # Keep only the observations of animals collected from 1995 onwards
 # that are female from the surveys dataset.
-filter(surveys, year >= 1995, sex == "F")
+surveys %>% 
+  filter(year >=1995,
+         sex == "F")
 ```
 **Note**
-The `sex` column is a character and thus needs to be quoted, whereas the `year` column is numerical and does not. 
-
-### Remove rows with `NA` (missing) values
-
-When we were plotting `weight` against `hindfoot_length` in the previous section, you must have noticed that we were getting a warning message:
-```{r, fig.show="hide", echo=FALSE}
-# Assign plot to a variable
-surveys_plot <- ggplot(data = surveys, 
-                       mapping = aes(x = weight, y = hindfoot_length))
-
-# Draw a scatter plot
-surveys_plot + 
-    geom_point()
-```
-
-This is because some of the values in the `weight` and `hindfoot_length` are `NA`.  `NA` is short for **Not Available** and essentially it means that there is no data for that particular index in the table.  We also refer to this as **missing data**.  `ggplot` does not plot the observations that have missing data and outputs the warning above which shows the number of observations that have missing data in the dataset we are plotting.  We can filter these rows before we plot them so that `ggplot` will have all the values for the observations it is plotting and so no warning will be disaplyed.
-
-The `is.na` function returns `TRUE` if the value passed to it is `NA`.  Applied to a vector or data frame it will return `TRUE` or `FALSE` for each index in the vector or data frame depending on whether the value at each index is missing or not.   The `!` symbol negates the result, so `!is.na` can be interpreted as **is not NA**.  See how this can be used in the code below:
-
-```{r, eval=FALSE}
-# Which values of the weight column are missing?
-is.na(surveys$weight)
-
-# Which values of the weight column are not missing?
-!is.na(surveys$weight)
-```
-
-Now let us apply the `is.na` function in `dplyr`'s `filter` function to remove the rows that have `weight` or `hindfoot_length` as `NA` from the `surveys` tibble.
-Here it's good to start breaking up the code over multiple lines to improve readability.
-
-```{r, eval=FALSE}
-filter(surveys, 
-  !is.na(weight), # remove rows that have weight as NA
-  !is.na(hindfoot_length))  # remove rows that have hindfoot_length as NA
-```
-Another way to remove rows that have `NA` values is by using the `drop_na` function in the `tidyr` package.  The code above can be replaced by the following code which gives the same answer:
-```{r}
-drop_na(surveys, weight, hindfoot_length)
-```
-
-Using `drop_na()` without specifying any columns will remove all the rows that have `NA` in any of the columns.
-```{r}
-drop_na(surveys)
-```
-Let us save the results of this in `surveys_complete` variable which contains only the rows that have all the values in all the columns present and use this for the remaining of the course.
-```{r}
-surveys_complete <- drop_na(surveys)
-```
-
-<br/>
-
-## Pipes
-
-What if you want to `select` and `filter` at the same time? 
-There are three ways to do this:
-
-- use intermediate steps
-- nested functions
-- pipes
-
-With intermediate steps, you create a temporary data frame and use
-that as input to the next function, like this:
-
-```{r, eval=FALSE}
-surveys2 <- select(surveys_complete, species_id, weight, hindfoot_length, year, sex)
-surveys_recent <- filter(surveys2, year >= 1995)
-```
-
-This is readable, but can clutter up your workspace with lots of objects that you have to name individually. With multiple steps, that can be hard to keep track of.
-
-You can also nest functions (*i.e.,* one function inside of another), like this:
-
-```{r, eval=FALSE}
-surveys_recent <- filter(
-                    select(surveys_complete,
-                           species_id, weight, hindfoot_length, year, sex)
-                    , year >= 1995)
-```
-
-This is handy, but can be difficult to read if too many functions are nested, as
-R evaluates the expression from the inside out (in this case, selecting, then filtering).
-
-The last option, **pipes**, are a recent addition to R. Pipes let you take
-the output of one function and send it directly to the next, which is useful
-when you need to do many things to the same dataset.  Pipes in R look like
-`%>%` and are made available via the **`magrittr`** package, installed automatically
-with `dplyr`. 
-
-```{r, eval=FALSE}
-surveys_complete %>%
-  select(species_id, weight, hindfoot_length, year, sex) %>%
-  filter(year >= 1995)
-```
-
-In the above code, we use the pipe to send the `surveys_complete` dataset first through `select` and then through `filter`.  Some may find it helpful to read the pipe like the word "then". For instance, in the above example, we took the tibble `surveys_complete`, *then* we `select`ed columns `species_id`, `weight`, `hindfoot_length`, `year`and `sex`.  We then `filter`ed the rows and only kept the ones that have `year >= 1995`. 
-
-Since `%>%` takes the object on its left and passes it as the first argument to the function on its right, we don't need to explicitly include the data frame/tibble as an argument to the `select` and `filter` functions any more. This is one of the biggest advantages of using pipes as it allows us to perform all the operations that we need to do with the need to create useless variables and store useless data.  Furthermore, the code is more readable when using pipes.  The `dplyr` functions by themselves are somewhat simple, but by combining them into linear workflows with the pipe, we can accomplish more complex manipulations of data frames/tibbles.
-
-If we want to create a new object with the transformed data we can assign it a new name as below:
-
-```{r, eval=FALSE}
-surveys_recent <- surveys_complete %>%
-                  select(species_id, weight, hindfoot_length, year, sex) %>%
-                  filter(year >= 1995)
-
-surveys_recent
-```
-
+The `sex` column is a character and thus needs to be quoted, whereas the `year` column is numerical and does not. Also note that the filter arguments could have been written on a single line, but it is useful to break up your code sometimes to make it more readable.
 
 > ### Challenge 1 - pipes
 >
@@ -222,7 +146,7 @@ You can also create a second new column based on the first new column within the
 ```{r, purl = FALSE}
 surveys_complete %>%
   mutate(weight_kg = weight / 1000,
-         weight_kg2 = weight_kg * 2)
+         weight_lbs = weight_kg * 2.20462)
 ```
 
 There are other ways on how to create new columns.  Refer to the dplyr cheat sheet *Make New Variables* section. 
