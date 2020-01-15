@@ -6,15 +6,12 @@ author: "Data Carpentry contributors"
 
 ```{r, echo = FALSE, purl = FALSE, message = FALSE}
 source("setup.R")
+surveys <- read_csv("data_raw/portal_data_joined.csv")
 ```
 
 <br/>
 
 ## Creating objects in R
-
-```{r, echo = FALSE, purl = TRUE}
-### Creating objects in R
-```
 
 You can get output from R simply by typing math in the console:
 
@@ -275,22 +272,13 @@ class(weight_g)
 class(animals)
 ```
 
-The function `str()` provides an overview of the structure of an object and its
-elements. It is a useful function when working with large and complex
-objects:
-
-```{r, purl = FALSE}
-str(weight_g)
-str(animals)
-```
-
 An **atomic vector** is the simplest R **data type** and is a linear vector of a single type. Above, we saw 
 2 of the 6 main **atomic vector** types  that R
 uses: `"character"` and `"numeric"` (or `"double"`). These are the basic building blocks that
 all R objects are built from. The other 4 **atomic vector** types are:
 
 * `"logical"` for `TRUE` and `FALSE` (the boolean data type)
-* `"integer"` for integer numbers (e.g., `2L`, the `L` indicates to R that it's an integer)
+* `"integer"` for integer numbers (whole numbers)
 * `"complex"` to represent complex numbers with real and imaginary parts (e.g.,
   `1 + 4i`) and that's all we're going to say about them
 * `"raw"` for bitstreams that we won't discuss further
@@ -303,7 +291,7 @@ factors (`factor`) and arrays (`array`).
 
 ## Missing data
 
-As R was designed to analyze datasets, it includes the concept of missing data
+As R was designed to analyse datasets, it includes the concept of missing data
 (which is uncommon in other programming languages). Missing data are represented
 in vectors as `NA`.
 
@@ -326,5 +314,53 @@ functions `is.na()`, `na.omit()`, and `complete.cases()`. See below for
 examples.
 
 Now that we have learned how to write scripts, and the basics of R's data
-structures, we are ready to start working with the Portal dataset we have been
-using in the other lessons, and learn about data frames.
+structures, we are ready to learn a bit more about using external functions in R.
+
+# Packages
+R has a lot of in-built functionality, such as the `sqrt`, `mean`, `max` functions that we have come across so far. This built-in functionality is what we refer to as **R Base**.
+
+It is possible to extend this functionality by using external functions through **packages**.  Packages in R are basically sets of additional functions that let you do more stuff.
+
+## Tidyverse
+The package that we will be using in this course is called **tidyverse.**  It is an "umbrella-package" that contains several packages useful for data manipulation and visualisation which work well together such as **`readr`**, **`tidyr`**, **`dplyr`**, **`ggplot2`**, **`tibble`**, etc...
+
+<center><img src="img/tidyverse_workflow.png" width = 75%/></center>
+
+<!--image of tidyverse-->
+<br />
+Tidyverse is a recent package (launched in 2016) when compared to _R base_ (stable version in 2000), thus you will still come across R resources that do not use _tidyverse_.  However, since its release, _tidyverse_ has been increasing in popularity throughout the R programming community and it is now very popular in Data Science as it was designed with the aim to help Data Scientists perform their tasks more efficiently.  
+
+Some of the main advantages of _tidyverse_ over _R base_ are:
+
+1. **It is more verbal **
+<p>Most tidyverse functions using common, meaningful words. For example, you can filter using `filter` or select data using `select`. </p>
+2. **Faster**
+<p>Using tidyverse is up to 10x faster[^1] when compared to the corresponding base R base functions.</p>
+3. **It does not convert data upon importing**
+<p>R Base has the somehwat annoying habit of converting data types when importing data, which can lead to problems when doing further analyses. With tidyverse, this does not happen.
+
+[^1]: https://readr.tidyverse.org/
+</p>
+
+<br/>
+
+### Installing and loading packages
+
+Before using a package for the first time you will need to install it on your machine, and then you should import it in every subsequent R session when you need it. To install a package in R on your machine you need to use the `install.packages` function.  To install the `tidyverse` package type the following straight into the console:  
+```{r, eval=FALSE, purl = FALSE}
+# Install the tidyverse package
+install.packages("tidyverse")
+```
+It is better to install packages straight from the console then from your script as there's no need to re-install packages every time you run the script.
+
+Then, to load the package type:
+```{r}
+# Load the tidyverse package
+library(tidyverse)
+```
+
+<br/>
+
+Now that we have loaded the `tidyverse` package in R we are now able to use its functions.  We will now start working through the data exploration workflow by first importing data into R.
+
+<br />

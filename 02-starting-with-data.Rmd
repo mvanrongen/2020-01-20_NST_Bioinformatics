@@ -16,14 +16,14 @@ source("setup.R")
 ### Presentation of the survey data
 ```
 
-To be able to do proper data analyses, it is crucial to understand your data before you can analyse it. So before we start doing any form of analyses we will first understand the dataset that we will be using throughout this course.  Let us first download the file and have a look at the data.
+To be able to do proper data analyses, it is crucial you understand your data. So before we start doing any form of analyses we will first try to understand the dataset that we will be using throughout this course.  Let us first download the file and have a look at the data.
 
 Thinking back to the structure of our R project, we have a working directory. Within the working directory we can create folders to organise our files.
 We are going to download some raw data and it is good practice to keep your raw data separate from other data, because that way you can always refer back to the data that you started with.
 
-Let's create a directory called `data_raw` within our working directory. If you are not sure that you are in your working directory, click on the cog symbol with _More_ next to it in the bottom right panel and select **Go to working directory**.
+Let's create a directory called `data_raw` within our working directory. If you are not sure that you are in your working directory, click on the cog symbol with **More** next to it in the bottom right panel and select **Go to working directory**.
 
-Next, click on **New Folder** and create a folder called `data_raw`. **Note** Remember that R is case-sensitive, so be consistent. Also, it is best to avoid spaces in names, so hence the underscore between `data` and `raw`.
+Next, click on **New Folder** and create a folder called `data_raw`. **Note:** Remember that R is case-sensitive, so be consistent. Also, it is best to avoid spaces in names, hence the underscore between `data` and `raw`.
 
 
 We are now ready to download the data, using the R function `download.file()` to download the CSV file that contains the data.  
@@ -36,14 +36,7 @@ Inside the download.file command, the first entry is a character string with the
 figshare. The text after the comma ("data_raw/portal_data_joined.csv") is the destination of the 
 file on your local machine. 
 
-If you go in the Files section in RStudio, click on the `portal_data_joined.csv` file in the `data` folder and then click `View File` you will be able to see the content of the file.</span>
-
-```
-"record_id","month","day","year","plot_id","species_id","sex","hindfoot_length","weight","genus","species","taxa","plot_type"
-1,7,16,1977,2,"NL","M","32","","Neotoma","albigula","Rodent","Control"
-72,8,19,1977,2,"NL","M","31","","Neotoma","albigula","Rodent","Control"  224,9,13,1977,2,"NL","","","","Neotoma","albigula","Rodent","Control"
-```
-From the first 4 lines of the `portal_data_joined.csv` file displayed above, we can notice that the file is in the comma separated value (CSV) format which is a very popular format where different values are separated by a comma. The first line of the file is the header of the file which provides a title for each column.  In this dataset, we are studying the species repartition and weight of animals caught in plots in our study area. The dataset has the following columns, with each row holding information for a single animal:
+The dataset has the following columns, with each row holding information for a single animal:
 
 | Column           | Description                        |
 |------------------|------------------------------------|
@@ -61,12 +54,11 @@ From the first 4 lines of the `portal_data_joined.csv` file displayed above, we 
 | taxon             | e.g. Rodent, Reptile, Bird, Rabbit |
 | plot\_type       | type of plot                       |
 
-
 ## Reading in data from a file
 
-Now that we have looked at the raw format of the file (CSV format), let us load the data into R and look at how data is loaded into R.  We will use `read_csv()` from the `tidyverse` package to load into memory the content of the CSV file. 
+Next we need to load the data into R and look at _how_ the data is loaded into R.  We will use `read_csv()` from the `tidyverse` package to load into memory the content of the CSV file. 
 
-You are now ready to load the data:
+You can do this using:
 
 ```{r, eval=TRUE,  purl=FALSE}
 surveys <- read_csv("data_raw/portal_data_joined.csv")
@@ -74,17 +66,16 @@ surveys <- read_csv("data_raw/portal_data_joined.csv")
 
 This statement doesn't produce any output because, as you might recall,
 assignments don't display anything. It does give you information on how the data was loaded.
-Note that some columns are classed as `col_double` (whole numbers) and others as `col_character` (text).
+Note that some columns are classed as `col_double` (numbers) and others as `col_character` (text).
 This can be useful and important information, because it tells you how R views the data. It also helps you check your data. For example, if R would view a column as `col_character` but you know that it should only contain numbers, then you know something has probably gone wrong during the data collection.
 
-If we want to have a closer look as to how our data has been
-loaded, we can visualise the contents of the data frame by typing its name: `surveys`:
+If we want to have a closer look at how our data has been loaded, we can visualise the contents of the data frame by typing its name `surveys`:
 
 ```{r, eval=TRUE, results=TRUE, purl=FALSE}
 surveys
 ```
 
-This shows that `surveys` is an object called a **tibble**, which is a tidyverse wrapper around a data frame. What we need to know about this is that it prints things a bit nicer on our screens than would be the case with a regular data frame object. Notice that only the first few rows of the `surveys` data frame were printed, whereas with a regular dataframe _all_ of the data would have been printed (and we would have had 34,786 rows printed on our screen!).
+The first line of the output shows the **data structure** used to store the data imported into: **`tibble`**. A `tibble` is the main data structure used in `tidyverse`.  You can look at `tibble` as the `data.frame` version of `tidyverse`. The first immediate difference from a `data.frame` is that a `tibble` displays the data type of each column under its name (handy) and it only prints as many columns as fit on one screen (even handier, otherwise it would print 34,786 rows!). 
 
 ## Data frames
 
@@ -100,7 +91,4 @@ numeric, a character, and a logical vector.
 
 ![](./img/data-frame.svg)
 
-Learn more about importing data in this [RStudio tutorial](https://support.rstudio.com/hc/en-us/articles/218611977-Importing-Data-with-RStudio)
-
-
-
+Now that we have loaded our data into R and understand the underlying structure of the data, we can move on to analysing our data!

@@ -510,19 +510,15 @@ div.tocify {
 <p><br/></p>
 <div id="understanding-data" class="section level2">
 <h2>Understanding data</h2>
-<p>To be able to do proper data analyses, it is crucial to understand your data before you can analyse it. So before we start doing any form of analyses we will first understand the dataset that we will be using throughout this course. Let us first download the file and have a look at the data.</p>
+<p>To be able to do proper data analyses, it is crucial you understand your data. So before we start doing any form of analyses we will first try to understand the dataset that we will be using throughout this course. Let us first download the file and have a look at the data.</p>
 <p>Thinking back to the structure of our R project, we have a working directory. Within the working directory we can create folders to organise our files. We are going to download some raw data and it is good practice to keep your raw data separate from other data, because that way you can always refer back to the data that you started with.</p>
-<p>Let’s create a directory called <code>data_raw</code> within our working directory. If you are not sure that you are in your working directory, click on the cog symbol with <em>More</em> next to it in the bottom right panel and select <strong>Go to working directory</strong>.</p>
-<p>Next, click on <strong>New Folder</strong> and create a folder called <code>data_raw</code>. <strong>Note</strong> Remember that R is case-sensitive, so be consistent. Also, it is best to avoid spaces in names, so hence the underscore between <code>data</code> and <code>raw</code>.</p>
+<p>Let’s create a directory called <code>data_raw</code> within our working directory. If you are not sure that you are in your working directory, click on the cog symbol with <strong>More</strong> next to it in the bottom right panel and select <strong>Go to working directory</strong>.</p>
+<p>Next, click on <strong>New Folder</strong> and create a folder called <code>data_raw</code>. <strong>Note:</strong> Remember that R is case-sensitive, so be consistent. Also, it is best to avoid spaces in names, hence the underscore between <code>data</code> and <code>raw</code>.</p>
 <p>We are now ready to download the data, using the R function <code>download.file()</code> to download the CSV file that contains the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="dt">url=</span><span class="st">&quot;https://ndownloader.figshare.com/files/2292169&quot;</span>,
               <span class="dt">destfile =</span> <span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>)</code></pre></div>
 <p>Inside the download.file command, the first entry is a character string with the source URL (“<a href="https://ndownloader.figshare.com/files/2292169" class="uri">https://ndownloader.figshare.com/files/2292169</a>”). This source URL downloads a CSV file from figshare. The text after the comma (“data_raw/portal_data_joined.csv”) is the destination of the file on your local machine.</p>
-<p>If you go in the Files section in RStudio, click on the <code>portal_data_joined.csv</code> file in the <code>data</code> folder and then click <code>View File</code> you will be able to see the content of the file.</span></p>
-<pre><code>&quot;record_id&quot;,&quot;month&quot;,&quot;day&quot;,&quot;year&quot;,&quot;plot_id&quot;,&quot;species_id&quot;,&quot;sex&quot;,&quot;hindfoot_length&quot;,&quot;weight&quot;,&quot;genus&quot;,&quot;species&quot;,&quot;taxa&quot;,&quot;plot_type&quot;
-1,7,16,1977,2,&quot;NL&quot;,&quot;M&quot;,&quot;32&quot;,&quot;&quot;,&quot;Neotoma&quot;,&quot;albigula&quot;,&quot;Rodent&quot;,&quot;Control&quot;
-72,8,19,1977,2,&quot;NL&quot;,&quot;M&quot;,&quot;31&quot;,&quot;&quot;,&quot;Neotoma&quot;,&quot;albigula&quot;,&quot;Rodent&quot;,&quot;Control&quot;  224,9,13,1977,2,&quot;NL&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;Neotoma&quot;,&quot;albigula&quot;,&quot;Rodent&quot;,&quot;Control&quot;</code></pre>
-<p>From the first 4 lines of the <code>portal_data_joined.csv</code> file displayed above, we can notice that the file is in the comma separated value (CSV) format which is a very popular format where different values are separated by a comma. The first line of the file is the header of the file which provides a title for each column. In this dataset, we are studying the species repartition and weight of animals caught in plots in our study area. The dataset has the following columns, with each row holding information for a single animal:</p>
+<p>The dataset has the following columns, with each row holding information for a single animal:</p>
 <table>
 <thead>
 <tr class="header">
@@ -588,8 +584,8 @@ div.tocify {
 </div>
 <div id="reading-in-data-from-a-file" class="section level2">
 <h2>Reading in data from a file</h2>
-<p>Now that we have looked at the raw format of the file (CSV format), let us load the data into R and look at how data is loaded into R. We will use <code>read_csv()</code> from the <code>tidyverse</code> package to load into memory the content of the CSV file.</p>
-<p>You are now ready to load the data:</p>
+<p>Next we need to load the data into R and look at <em>how</em> the data is loaded into R. We will use <code>read_csv()</code> from the <code>tidyverse</code> package to load into memory the content of the CSV file.</p>
+<p>You can do this using:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>)</code></pre></div>
 <pre><code>#&gt; Parsed with column specification:
 #&gt; cols(
@@ -607,8 +603,8 @@ div.tocify {
 #&gt;   taxa = col_character(),
 #&gt;   plot_type = col_character()
 #&gt; )</code></pre>
-<p>This statement doesn’t produce any output because, as you might recall, assignments don’t display anything. It does give you information on how the data was loaded. Note that some columns are classed as <code>col_double</code> (whole numbers) and others as <code>col_character</code> (text). This can be useful and important information, because it tells you how R views the data. It also helps you check your data. For example, if R would view a column as <code>col_character</code> but you know that it should only contain numbers, then you know something has probably gone wrong during the data collection.</p>
-<p>If we want to have a closer look as to how our data has been loaded, we can visualise the contents of the data frame by typing its name: <code>surveys</code>:</p>
+<p>This statement doesn’t produce any output because, as you might recall, assignments don’t display anything. It does give you information on how the data was loaded. Note that some columns are classed as <code>col_double</code> (numbers) and others as <code>col_character</code> (text). This can be useful and important information, because it tells you how R views the data. It also helps you check your data. For example, if R would view a column as <code>col_character</code> but you know that it should only contain numbers, then you know something has probably gone wrong during the data collection.</p>
+<p>If we want to have a closer look at how our data has been loaded, we can visualise the contents of the data frame by typing its name <code>surveys</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">surveys</code></pre></div>
 <pre><code>#&gt; # A tibble: 34,786 x 13
 #&gt;    record_id month   day  year plot_id species_id sex   hindfoot_length weight
@@ -625,7 +621,7 @@ div.tocify {
 #&gt; 10       661     3    11  1978       2 NL         &lt;NA&gt;               NA     NA
 #&gt; # … with 34,776 more rows, and 4 more variables: genus &lt;chr&gt;, species &lt;chr&gt;,
 #&gt; #   taxa &lt;chr&gt;, plot_type &lt;chr&gt;</code></pre>
-<p>This shows that <code>surveys</code> is an object called a <strong>tibble</strong>, which is a tidyverse wrapper around a data frame. What we need to know about this is that it prints things a bit nicer on our screens than would be the case with a regular data frame object. Notice that only the first few rows of the <code>surveys</code> data frame were printed, whereas with a regular dataframe <em>all</em> of the data would have been printed (and we would have had 34,786 rows printed on our screen!).</p>
+<p>The first line of the output shows the <strong>data structure</strong> used to store the data imported into: <strong><code>tibble</code></strong>. A <code>tibble</code> is the main data structure used in <code>tidyverse</code>. You can look at <code>tibble</code> as the <code>data.frame</code> version of <code>tidyverse</code>. The first immediate difference from a <code>data.frame</code> is that a <code>tibble</code> displays the data type of each column under its name (handy) and it only prints as many columns as fit on one screen (even handier, otherwise it would print 34,786 rows!).</p>
 </div>
 <div id="data-frames" class="section level2">
 <h2>Data frames</h2>
@@ -636,7 +632,7 @@ div.tocify {
 <img src="img/data-frame.svg" />
 
 </div>
-<p>Learn more about importing data in this <a href="https://support.rstudio.com/hc/en-us/articles/218611977-Importing-Data-with-RStudio">RStudio tutorial</a></p>
+<p>Now that we have loaded our data into R and understand the underlying structure of the data, we can move on to analysing our data!</p>
 </div>
 
 
