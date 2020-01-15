@@ -43,7 +43,7 @@ In the next sections we will be looking at the _import_, _tidy_, _transform_ and
 
 <img src="img/ggplot2.png" width="50"/>
 
-After inspecting the `surveys` dataset in R, the data looks tidy and we are happy with its format, so let us start understanding better our data by visualising it.  **`ggplot2`** is the visualisation package in `tidyverse` and we will be using this to create some plots.  `ggplot2` is a very popular package used for plotting mainly due to its simple way to create plots from tabular data.  
+Visualising is probably one of the most satisfying parts of doing data analysis, after all most people probably like a nice graph! Thankfully tidyverse makes this very easy for us, using the **`ggplot2`** package. We will be using this package to create some plots.  `ggplot2` is a very popular package used for plotting mainly due to its simple, modular way to create plots from tabular data.  
 
 To create a plot, we will use the following basic template. 
 ```
@@ -117,21 +117,21 @@ surveys_plot +
   geom_smooth()
 ```
 
->**Note**
->
->- Anything you put in the `ggplot()` function can be seen by any geom layers that you add (_i.e.,_ these are universal plot settings). 
->- You can also specify mappings for a given geom independently of the mappings defined globally in the `ggplot()` function.
->- The `+` sign used to add new layers must be placed at the end of the line containing the *previous* layer. If, instead, the `+` sign is added at the beginning of the line containing the new layer, >**`ggplot2`** will not add the new layer and will return an error message.
->
->```{r chunkT, eval=FALSE, purl=FALSE}
-># This is the correct syntax for adding layers
->surveys_plot +
+**Note**
+
+- Anything you put in the `ggplot()` function can be seen by any geom layers that you add (_i.e.,_ these are universal plot settings). 
+- You can also specify mappings for a given geom independently of the mappings defined globally in the `ggplot()` function.
+- The `+` sign used to add new layers must be placed at the end of the line containing the *previous* layer. If, instead, the `+` sign is added at the beginning of the line containing the new layer, >**`ggplot2`** will not add the new layer and will return an error message.
+
+```{r chunkT, eval=FALSE, purl=FALSE}
+# This is the correct syntax for adding layers
+surveys_plot +
   geom_point()
->
-># This will not add the new layer and will return an error message
->surveys_plot 
+
+# This will not add the new layer and will return an error message
+surveys_plot 
   + geom_point()
->```
+```
 
 > ### Challenge 
 >
