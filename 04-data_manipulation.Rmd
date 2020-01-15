@@ -309,43 +309,6 @@ surveys_complete %>%
 
 <br/>
 
-## Plotting time series data - `geom_line()` {#timeseries}
-
-Now that we know how to obtain frequencies, let us create a time series plot with `ggplot`. A time series plot displays values over time with the aim to show how data changes over time.  Let us plot years on the x-axis and the frequencies of the yearly observations per genus on the y-axis.
-
-First we need to get the frequencies of the yearly observations per genus:
-```{r, results=TRUE}
-yearly_counts <- surveys_complete %>%
-  count(year, genus)
-```
-`yearly_counts` now contains the following results:
-```{r, echo=FALSE, results=TRUE}
-yearly_counts
-```
-Let us plot this in a line plot:
-```{r first-time-series, purl=FALSE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
-     geom_line()
-```
-
-Unfortunately, this does not work because `ggplot` plotted data for all the genera
-together. We need to tell `ggplot` to draw a line for each genus by telling it that each genus forms a group.
-To do this we have to modify the aesthetic function to include `group = genus`:
-
-```{r time-series-by-species, purl=FALSE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n, group = genus)) +
-    geom_line()
-```
-
-This creates a line for each genus. However, since they are all in the same colour we are not able to distinguish which genus is which.  If we use a different colour for each genus the plot should be clear. This is done by using the argument `colour` in the aesthetic function (using `colour` also automatically groups the data):
-
-```{r time-series-with-colours, purl=FALSE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n, colour = genus)) +
-    geom_line()
-```
-
-<br/>
-
 ## Plotting histograms
 
 If you would like to plot the distribution of a **single continuous variable** the frequency will be automatically calculated, so you do not need to use `count()` to calculate the frequency beforehand.  The x-axis is automatically divided into bins and the number of observations of the continuous variable in each bin is shown as a bar in the histogram.  In the `ggplot2` package a histogram can be plotted using the `geom_histogram` function.  
@@ -367,39 +330,12 @@ Note that the default number of bins in a histogram is 30.  To get have a granul
 
 There are other plots that can be used for a single continuous variable (see ONE VARIABLE continuous section on [ggplot2 cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)).
 
-
-> ### Challenge - `geom_freqpoly()`
->
->Use the `geom_freqpoly()` to display frequency polygons instead of bars for the distribution of `weight`.  Show `sex` category as before in a different colour.  
->**Hint:** Use the argument `colour` in the aesthetic function rather than `fill` to display a frequency polygon for each `sex` category in a different colour.  
->
->```{r, answer=TRUE, message=FALSE}
->ggplot(surveys_complete, aes(weight, colour = sex)) +
->  geom_freqpoly()
->```
-
-<br/>
-
 ## Grouping data
 In the examples above we learnt how to summarise data over all observations, *e.g.,* we calculated the mean over all observations using the `summarise` function. However, in data analysis, especially when dealing with big data, a common approach to data exploration is the [**split-apply-combine**](https://www.jstatsoft.org/article/view/v040i01) strategy. The idea behind this strategy is to split the data into more managable pieces, apply any operations required on the data independently on each piece and then combine the results together. The figure below illustrates the approach that is done in the split-apply-combine approach.
 
 ![](img/split-apply-combine.svg)  
 
-Let us work on an example on how we can apply the split-apply-combine strategy on the `surveys_complete` dataset.  We would like to split the data by the different categories present in the `sex` column and calculate the mean weight for each category.  We can do this as follows:
-
-```{r, results=TRUE}
-surveys_complete %>%
-  # Extract females
-  filter(sex == "F") %>%
-  summarise(mean_weight = mean(weight))
-
-surveys_complete %>%
-  # Extract males
-  filter(sex == "M") %>%
-  summarise(mean_weight = mean(weight))
-```
-
-However, this would be a very tedious process to do if we had several categories.  We can do this easily by using the `group_by` function in the `dplyr` package:
+Let's work on an example on how we can apply the split-apply-combine strategy on the `surveys_complete` dataset.  We would like to split the data by the different categories present in the `sex` column and calculate the mean weight for each category.  We can do this easily by using the `group_by` function in the `dplyr` package:
 ```{r, results=TRUE}
 surveys_complete %>%
   group_by(sex) %>%
@@ -453,6 +389,193 @@ surveys_complete %>%
 > ```
 
 <br/>
+
+# Further visualisations
+
+## Facetting
+
+The `ggplot2` package has a way of creating different plots based on the different categories in the data.  This is known as **facetting**.  With facetting we do not need to use `group_by()` to split the data into different groups to be able to plot the different categories in different plots as `ggplot2` does this automatically.
+
+There are two types of `facet` functions:
+
+- `facet_wrap()` arranges the different plots into muliple rows and columns to cleanly fit on one page.
+- `facet_grid()` plots all the categories in 1 row or 1 column.
+
+Let us see this in action.  When we plotted a [time series plot](#timeseries), we created a line for each different genus.  Given there are several genera, it would be more clearer if we plotted each line is a seperate plot, one plot for each genus.  Facetting will do this very easily.  Let us start with `facet_wrap()`.  We supply the variable that we would like to group upon within `vars()` as following:
+
+```{r, fig.show=TRUE}
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+    geom_line() +
+    facet_wrap(facets = vars(genus))
+```
+
+As you can see, each genus has been plotted as a separate plot.  It is now clear which are the genera that were observed the most.  Another advantage of facetting is that it uses a common axes and all plots are aligned to the same values on the axes, making the different plots comparable.  If you want to have different axes for each plot you can do so by using the `scales` argument.  
+```{r, fig.show=TRUE}
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+    geom_line() +
+    facet_wrap(facets = vars(genus), scales = "free")
+```
+
+The pattern of the graphs that before were hardly visible, *e.g.,* Baiomys, is now clear as the axes have been rescaled to fit the data.  This is the main advantage of using **free scales**.  The disadvantage is that the different plots are not comparable as before.  
+
+If we would like to see if there is any difference between the `sex`, we can do this by adding `sex` as another grouping to `count()`.
+```{r}
+yearly_sex_counts <- surveys_complete %>%
+                      count(year, genus, sex)
+```
+`yearly_sex_counts` will now look like:
+```{r, echo=FALSE, results=TRUE}
+yearly_sex_counts
+```
+This should now allow us to also split by `sex`.  We can use colour to distinguish between the `sex` categories:
+```{r, fig.show=TRUE}
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
+  geom_line() +
+  facet_wrap(facets = vars(genus))
+```
+
+Let us do the same thing with `facet_grid()` so that we can understand the difference between the two facetting techniques in the `ggplot2` package. With `facet_grid()` you specify what variable you would like to split on as in the `rows` or `cols` arguments:
+
+<a name="facet_grid_row"></a>
+```{r, fig.show=TRUE} 
+ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+    geom_line() +
+    # Display the genera as columns
+    facet_grid(cols = vars(genus))
+```
+
+As you can see `facet_grid()` placed all the categories of `genus` in 1 row, unlike `facet_wrap()` which have spread them over multiple rows to fit well in 1 page. 
+Let us split the plots by `sex` as well by plotting `sex` as the rows:
+```{r, fig.show=TRUE}
+ggplot(data = yearly_sex_counts, 
+  mapping = aes(x = year, y = n)) +
+  geom_line() +
+  facet_grid(rows = vars(sex), cols = vars(genus))
+```
+
+>More information on further functionality of facetting can be found in the [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html) and [`facet_grid()`](https://ggplot2.tidyverse.org/reference/facet_grid.html) documentation.  
+
+
+> ### Challenge
+>
+>Instead of splitting the plots based on `sex` display the `sex` as different coloured line graphs in the same plot.
+>
+>```{r, answer=TRUE}
+ggplot(data = yearly_sex_counts, 
+  mapping = aes(x = year, y = n, colour = sex)) +
+  geom_line() +
+  facet_grid(cols = vars(genus))
+>```
+
+<br/>
+
+## Customisation
+
+Though the default visualisation of `ggplot2` plots is already at a good standard, there are several ways one can improve even further the visualisations.  
+
+### Labels
+
+Let us start customising the last plot we have plotted by renaming the axes and adding a title to the plot.  This is done by using the [`labs`](https://ggplot2.tidyverse.org/reference/labs.html) function:
+
+```{r, fig.show=TRUE}
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n)) +
+  geom_line() +
+  facet_grid(cols = vars(genus)) +
+  labs(title = "Observed genera through time",
+       x = "Year of observation",
+       y = "Number of animals")
+```
+         
+The major item that needs fixing in the plot is the text on the x-axis as this crammed and is not readable at the moment. This is mainly due to the fact that the size of the plot is dependent on the size of the window (in this case RStudio).  You can work around this by saving your plot to a file and specifying the width of the plot ([see Saving a plot to a file section](#saveplot)). **Themes** in the `ggplot2` package control the display of all non-data elements of the plot.  Let us start customising the text on the x-axis by changing its size and position using the `theme` function.  Note that `theme()` has several other arguments and you can read more about them in the [`theme()` documentation](https://ggplot2.tidyverse.org/reference/theme.html).
+
+```{r, fig.show=TRUE}         
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
+    geom_line() +
+    facet_grid(cols = vars(genus)) +
+    labs(title = "Observed genera through time",
+         x = "Year of observation",
+         y = "Number of animals")  +
+    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
+          axis.text.y = element_text(size = 7), 
+          strip.text=element_text(size = 7, angle = 45))
+```
+         
+         
+### Legend
+
+With the plot already looking better, the last thing we would like to change is the legend.  Legends are very tricky in `ggplot2` as the fuction to use is determined by the data that is being displayed.  In this case the legend has been created based on colour groupings.  Therefore we can change the lengend title, categories and colour as follows:
+
+```{r, fig.show=TRUE}         
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
+    geom_line() +
+    facet_grid(cols = vars(genus)) +
+    labs(title = "Observed genera through time",
+         x = "Year of observation",
+         y = "Number of animals")  +
+    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
+          axis.text.y = element_text(size = 7), 
+          strip.text = element_text(size = 7, angle = 45)) +
+    scale_colour_brewer("Sex", 
+                       palette = "Set1", 
+                       breaks = c("F", "M"), 
+                       labels = c("Female", "Male"))
+```
+
+>Note: If you would like to see what other palettes are available please see [http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3](http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3).
+
+### Themes
+
+`ggplot2` has a set of themes that can be used to change the overall appearance of the graph without much effort. For example, if we create the [first plot](#firstplot) again and apply the `theme_bw()` theme we get a more simpler white background:
+```{r, fig.show=TRUE, warning=FALSE, message=FALSE}
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point() +
+  theme_bw()
+```
+
+A list of themes can be found in the [`ggplot2` documentation](https://ggplot2.tidyverse.org/reference/index.html#section-themes).  
+
+>### Challenge
+>
+>Use what you just learned to create a plot that depicts how the average weight of each species changes through the years.
+>
+>```{r, answer=TRUE, fig.show=TRUE}
+>surveys_complete %>%
+  group_by(year, species) %>%
+  summarise(avg_weight = mean(weight)) %>%
+  ggplot(mapping = aes(x = year, y = avg_weight)) +
+    geom_line() +
+    facet_wrap(facets = vars(species)) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+>```
+
+<br/>
+
+# Exporting/Writing data to files
+
+Now that you have learned how to use **`dplyr`** to transform your raw data, you may want to export these new datasets to share them with your collaborators or for archival.
+
+Similar to the `read_csv` function used for reading CSV files into R, there is
+a [`write_csv` function](https://readr.tidyverse.org/reference/write_delim.html) that generates CSV files from data frames and tibbles which is also present in the `readr` package.
+
+Before using `write_csv()`, we are going to create a new folder, `data_output`,
+in our working directory that will store this generated dataset. We don't want
+to write generated datasets in the same directory as our raw data. It's good
+practice to keep them separate. The `data` folder should only contain the raw,
+unaltered data, and should be left alone to make sure we don't delete or modify
+it. In contrast, our script will generate the contents of the `data_output`
+directory, so even if the files it contains are deleted, we can always
+re-generate them.
+
+Let us save the `surveys_complete` tibble in `data_output/surveys_complete.csv` file:
+
+```{r}
+write_csv(surveys_complete, path = "data_output/surveys_complete.csv")
+```
+
+
+# Addtional information
+Clearly the topics we have covered so far are just a small fraction of what is possible in R. Below is information on some more advanced topics of data wrangling and plotting. The topics and challenges are hopefully self-explanatory!
 
 ## Reshaping data - pivot
 
@@ -695,186 +818,3 @@ In this case we want to join the data by `genus`, so we use `by = genus` as the 
 ![](img/join_examples.png)
 
 <br/>
-
-# Further visualisations
-
-## Facetting
-
-The `ggplot2` package has a way of creating different plots based on the different categories in the data.  This is known as **facetting**.  With facetting we do not need to use `group_by()` to split the data into different groups to be able to plot the different categories in different plots as `ggplot2` does this automatically.
-
-There are two types of `facet` functions:
-
-- `facet_wrap()` arranges the different plots into muliple rows and columns to cleanly fit on one page.
-- `facet_grid()` plots all the categories in 1 row or 1 column.
-
-Let us see this in action.  When we plotted a [time series plot](#timeseries), we created a line for each different genus.  Given there are several genera, it would be more clearer if we plotted each line is a seperate plot, one plot for each genus.  Facetting will do this very easily.  Let us start with `facet_wrap()`.  We supply the variable that we would like to group upon within `vars()` as following:
-
-```{r, fig.show=TRUE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
-    geom_line() +
-    facet_wrap(facets = vars(genus))
-```
-
-As you can see, each genus has been plotted as a separate plot.  It is now clear which are the genera that were observed the most.  Another advantage of facetting is that it uses a common axes and all plots are aligned to the same values on the axes, making the different plots comparable.  If you want to have different axes for each plot you can do so by using the `scales` argument.  
-```{r, fig.show=TRUE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
-    geom_line() +
-    facet_wrap(facets = vars(genus), scales = "free")
-```
-
-The pattern of the graphs that before were hardly visible, *e.g.,* Baiomys, is now clear as the axes have been rescaled to fit the data.  This is the main advantage of using **free scales**.  The disadvantage is that the different plots are not comparable as before.  
-
-If we would like to see if there is any difference between the `sex`, we can do this by adding `sex` as another grouping to `count()`.
-```{r}
-yearly_sex_counts <- surveys_complete %>%
-                      count(year, genus, sex)
-```
-`yearly_sex_counts` will now look like:
-```{r, echo=FALSE, results=TRUE}
-yearly_sex_counts
-```
-This should now allow us to also split by `sex`.  We can use colour to distinguish between the `sex` categories:
-```{r, fig.show=TRUE}
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
-  geom_line() +
-  facet_wrap(facets = vars(genus))
-```
-
-Let us do the same thing with `facet_grid()` so that we can understand the difference between the two facetting techniques in the `ggplot2` package. With `facet_grid()` you specify what variable you would like to split on as in the `rows` or `cols` arguments:
-
-<a name="facet_grid_row"></a>
-```{r, fig.show=TRUE} 
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
-    geom_line() +
-    # Display the genera as columns
-    facet_grid(cols = vars(genus))
-```
-
-As you can see `facet_grid()` placed all the categories of `genus` in 1 row, unlike `facet_wrap()` which have spread them over multiple rows to fit well in 1 page. 
-Let us split the plots by `sex` as well by plotting `sex` as the rows:
-```{r, fig.show=TRUE}
-ggplot(data = yearly_sex_counts, 
-  mapping = aes(x = year, y = n)) +
-  geom_line() +
-  facet_grid(rows = vars(sex), cols = vars(genus))
-```
-
->More information on further functionality of facetting can be found in the [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html) and [`facet_grid()`](https://ggplot2.tidyverse.org/reference/facet_grid.html) documentation.  
-
-
-> ### Challenge
->
->Instead of splitting the plots based on `sex` display the `sex` as different coloured line graphs in the same plot.
->
->```{r, answer=TRUE}
-ggplot(data = yearly_sex_counts, 
-  mapping = aes(x = year, y = n, colour = sex)) +
-  geom_line() +
-  facet_grid(cols = vars(genus))
->```
-
-<br/>
-
-## Customisation
-
-Though the default visualisation of `ggplot2` plots is already at a good standard, there are several ways one can improve even further the visualisations.  
-
-### Labels
-
-Let us start customising the last plot we have plotted by renaming the axes and adding a title to the plot.  This is done by using the [`labs`](https://ggplot2.tidyverse.org/reference/labs.html) function:
-
-```{r, fig.show=TRUE}
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n)) +
-  geom_line() +
-  facet_grid(cols = vars(genus)) +
-  labs(title = "Observed genera through time",
-       x = "Year of observation",
-       y = "Number of animals")
-```
-         
-The major item that needs fixing in the plot is the text on the x-axis as this crammed and is not readable at the moment. This is mainly due to the fact that the size of the plot is dependent on the size of the window (in this case RStudio).  You can work around this by saving your plot to a file and specifying the width of the plot ([see Saving a plot to a file section](#saveplot)). **Themes** in the `ggplot2` package control the display of all non-data elements of the plot.  Let us start customising the text on the x-axis by changing its size and position using the `theme` function.  Note that `theme()` has several other arguments and you can read more about them in the [`theme()` documentation](https://ggplot2.tidyverse.org/reference/theme.html).
-
-```{r, fig.show=TRUE}         
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
-    geom_line() +
-    facet_grid(cols = vars(genus)) +
-    labs(title = "Observed genera through time",
-         x = "Year of observation",
-         y = "Number of animals")  +
-    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
-          axis.text.y = element_text(size = 7), 
-          strip.text=element_text(size = 7, angle = 45))
-```
-         
-         
-### Legend
-
-With the plot already looking better, the last thing we would like to change is the legend.  Legends are very tricky in `ggplot2` as the fuction to use is determined by the data that is being displayed.  In this case the legend has been created based on colour groupings.  Therefore we can change the lengend title, categories and colour as follows:
-
-```{r, fig.show=TRUE}         
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
-    geom_line() +
-    facet_grid(cols = vars(genus)) +
-    labs(title = "Observed genera through time",
-         x = "Year of observation",
-         y = "Number of animals")  +
-    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
-          axis.text.y = element_text(size = 7), 
-          strip.text = element_text(size = 7, angle = 45)) +
-    scale_colour_brewer("Sex", 
-                       palette = "Set1", 
-                       breaks = c("F", "M"), 
-                       labels = c("Female", "Male"))
-```
-
->Note: If you would like to see what other palettes are available please see [http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3](http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3).
-
-### Themes
-
-`ggplot2` has a set of themes that can be used to change the overall appearance of the graph without much effort. For example, if we create the [first plot](#firstplot) again and apply the `theme_bw()` theme we get a more simpler white background:
-```{r, fig.show=TRUE, warning=FALSE, message=FALSE}
-ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
-  geom_point() +
-  theme_bw()
-```
-
-A list of themes can be found in the [`ggplot2` documentation](https://ggplot2.tidyverse.org/reference/index.html#section-themes).  
-
->### Challenge
->
->Use what you just learned to create a plot that depicts how the average weight of each species changes through the years.
->
->```{r, answer=TRUE, fig.show=TRUE}
->surveys_complete %>%
-  group_by(year, species) %>%
-  summarise(avg_weight = mean(weight)) %>%
-  ggplot(mapping = aes(x = year, y = avg_weight)) +
-    geom_line() +
-    facet_wrap(facets = vars(species)) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
->```
-
-<br/>
-
-# Exporting/Writing data to files
-
-Now that you have learned how to use **`dplyr`** to transform your raw data, you may want to export these new datasets to share them with your collaborators or for archival.
-
-Similar to the `read_csv` function used for reading CSV files into R, there is
-a [`write_csv` function](https://readr.tidyverse.org/reference/write_delim.html) that generates CSV files from data frames and tibbles which is also present in the `readr` package.
-
-Before using `write_csv()`, we are going to create a new folder, `data_output`,
-in our working directory that will store this generated dataset. We don't want
-to write generated datasets in the same directory as our raw data. It's good
-practice to keep them separate. The `data` folder should only contain the raw,
-unaltered data, and should be left alone to make sure we don't delete or modify
-it. In contrast, our script will generate the contents of the `data_output`
-directory, so even if the files it contains are deleted, we can always
-re-generate them.
-
-Let us save the `surveys_complete` tibble in `data_output/surveys_complete.csv` file:
-
-```{r}
-write_csv(surveys_complete, path = "data_output/surveys_complete.csv")
-```
