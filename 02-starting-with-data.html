@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Alexia Cardona" />
+<meta name="author" content="Alexia Cardona &amp; Martin van Rongen" />
 
 
 <title>Starting with data</title>
@@ -386,6 +385,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -414,6 +414,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -522,7 +528,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Starting with data</h1>
-<h4 class="author">Alexia Cardona</h4>
+<h4 class="author">Alexia Cardona &amp; Martin van Rongen</h4>
 
 </div>
 
@@ -531,7 +537,10 @@ div.tocify {
 <div id="understanding-data" class="section level2">
 <h2>Understanding data</h2>
 <p>To be able to do proper data analyses, it is crucial to understand your data before you can analyse it. So before we start doing any form of analyses we will first understand the dataset that we will be using throughout this course. Let us first download the file and have a look at the data.</p>
-<p>We are going to use the R function <code>download.file()</code> to download the CSV file that contains the data.</p>
+<p>Thinking back to the structure of our R project, we have a working directory. Within the working directory we can create folders to organise our files. We are going to download some raw data and it is good practice to keep your raw data separate from other data, because that way you can always refer back to the data that you started with.</p>
+<p>Let’s create a directory called <code>data_raw</code> within our working directory. If you are not sure that you are in your working directory, click on the cog symbol with <em>More</em> next to it in the bottom right panel and select <strong>Go to working directory</strong>.</p>
+<p>Next, click on <strong>New Folder</strong> and create a folder called <code>data_raw</code>. <strong>Note</strong> Remember that R is case-sensitive, so be consistent. Also, it is best to avoid spaces in names, so hence the underscore between <code>data</code> and <code>raw</code>.</p>
+<p>We are now ready to download the data, using the R function <code>download.file()</code> to download the CSV file that contains the data.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">download.file</span>(<span class="dt">url=</span><span class="st">&quot;https://ndownloader.figshare.com/files/2292169&quot;</span>,</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">              <span class="dt">destfile =</span> <span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>)</a></code></pre></div>
 <p>Inside the download.file command, the first entry is a character string with the source URL (“<a href="https://ndownloader.figshare.com/files/2292169" class="uri">https://ndownloader.figshare.com/files/2292169</a>”). This source URL downloads a CSV file from figshare. The text after the comma (“data_raw/portal_data_joined.csv”) is the destination of the file on your local machine.</p>
@@ -605,317 +614,35 @@ div.tocify {
 </div>
 <div id="reading-in-data-from-a-file" class="section level2">
 <h2>Reading in data from a file</h2>
-<p>Now that we have looked at the raw format of the file (CSV format), let us load the data into R and look at how data is loaded into R. We will use <code>read.csv()</code> to load into memory the content of the CSV file as an object of class <code>data.frame</code>.</p>
+<p>Now that we have looked at the raw format of the file (CSV format), let us load the data into R and look at how data is loaded into R. We will use <code>read_csv()</code> from the <code>tidyverse</code> package to load into memory the content of the CSV file.</p>
 <p>You are now ready to load the data:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">surveys &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">surveys &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Parsed with column specification:
+#&gt; cols(
+#&gt;   record_id = col_double(),
+#&gt;   month = col_double(),
+#&gt;   day = col_double(),
+#&gt;   year = col_double(),
+#&gt;   plot_id = col_double(),
+#&gt;   species_id = col_character(),
+#&gt;   sex = col_character(),
+#&gt;   hindfoot_length = col_double(),
+#&gt;   weight = col_double(),
+#&gt;   genus = col_character(),
+#&gt;   species = col_character(),
+#&gt;   taxa = col_character(),
+#&gt;   plot_type = col_character()
+#&gt; )</code></pre>
 <p>This statement doesn’t produce any output because, as you might recall, assignments don’t display anything. If we want to check that our data has been loaded, we can see the contents of the data frame by typing its name: <code>surveys</code>.</p>
-<p>Wow… that was a lot of output. At least it means the data loaded properly. Let’s check the top (the first 6 lines) of this data frame using the function <code>head()</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">head</span>(surveys)</a></code></pre></div>
-<pre><code>#&gt;   record_id month day year plot_id species_id sex hindfoot_length weight
-#&gt; 1         1     7  16 1977       2         NL   M              32     NA
-#&gt; 2        72     8  19 1977       2         NL   M              31     NA
-#&gt; 3       224     9  13 1977       2         NL                  NA     NA
-#&gt; 4       266    10  16 1977       2         NL                  NA     NA
-#&gt; 5       349    11  12 1977       2         NL                  NA     NA
-#&gt; 6       363    11  12 1977       2         NL                  NA     NA
-#&gt;     genus  species   taxa plot_type
-#&gt; 1 Neotoma albigula Rodent   Control
-#&gt; 2 Neotoma albigula Rodent   Control
-#&gt; 3 Neotoma albigula Rodent   Control
-#&gt; 4 Neotoma albigula Rodent   Control
-#&gt; 5 Neotoma albigula Rodent   Control
-#&gt; 6 Neotoma albigula Rodent   Control</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co">## Try also</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">View</span>(surveys)</a></code></pre></div>
-<blockquote>
-<h4 id="note">Note</h4>
-<p><code>read.csv</code> assumes that fields are delineated by commas, however, in several countries, the comma is used as a decimal separator and the semicolon (;) is used as a field delineator. If you want to read in this type of files in R, you can use the <code>read.csv2</code> function. It behaves exactly like <code>read.csv</code> but uses different parameters for the decimal and the field separators. If you are working with another format, they can be both specified by the user. Check out the help for <code>read.csv()</code> by typing <code>?read.csv</code> to learn more. There is also the <code>read.delim()</code> for in tab separated data files. It is important to note that all of these functions are actually wrapper functions for the main <code>read.table()</code> function with different arguments. As such, the surveys data above could have also been loaded by using <code>read.table()</code> with the separation argument as <code>,</code>. The code is as follows: <code>surveys &lt;- read.table(file=&quot;data_raw/portal_data_joined.csv&quot;, sep=&quot;,&quot;, header=TRUE)</code>. The header argument has to be set to TRUE to be able to read the headers as by default <code>read.table()</code> has the header argument set to FALSE.</p>
-</blockquote>
+<p>This shows that <code>surveys</code> is an object called a <strong>tibble</strong>, which is tidyverse’s way of dealing with tables. What we need to know about this at the moment is that it prints things a bit nicer on our screens. Note that only the first few rows of the <code>surveys</code> data frame were printed (we would not like to see 30,000+ rows printed on our screen!).</p>
 </div>
 <div id="data-frames" class="section level2">
 <h2>Data frames</h2>
 <p>Data frames are another data structure in R which is most widely used in the R programming world. It is very popular as most of the data is readily available in tabular form and it is the also the data structure used when plotting and performing most analyses in R.</p>
+<p>A data frame can be compared to what you would see in an Excel spreadsheet. A rectangular data set.</p>
 <p>A data frame is the representation of data in the format of a table where the columns are vectors that all have the same length. Because columns are vectors, each column must contain a single type of data (e.g., characters, integers, logical). For example, here is a figure depicting a data frame comprising a numeric, a character, and a logical vector.</p>
 <p><img src="img/data-frame.svg" /></p>
-<p>In R we can see this by inspecting the <b>str</b>ucture of a data frame with the function <code>str()</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">str</span>(surveys)</a></code></pre></div>
-<pre><code>#&gt; &#39;data.frame&#39;:    34786 obs. of  13 variables:
-#&gt;  $ record_id      : int  1 72 224 266 349 363 435 506 588 661 ...
-#&gt;  $ month          : int  7 8 9 10 11 11 12 1 2 3 ...
-#&gt;  $ day            : int  16 19 13 16 12 12 10 8 18 11 ...
-#&gt;  $ year           : int  1977 1977 1977 1977 1977 1977 1977 1978 1978 1978 ...
-#&gt;  $ plot_id        : int  2 2 2 2 2 2 2 2 2 2 ...
-#&gt;  $ species_id     : Factor w/ 48 levels &quot;AB&quot;,&quot;AH&quot;,&quot;AS&quot;,..: 16 16 16 16 16 16 16 16 16 16 ...
-#&gt;  $ sex            : Factor w/ 3 levels &quot;&quot;,&quot;F&quot;,&quot;M&quot;: 3 3 1 1 1 1 1 1 3 1 ...
-#&gt;  $ hindfoot_length: int  32 31 NA NA NA NA NA NA NA NA ...
-#&gt;  $ weight         : int  NA NA NA NA NA NA NA NA 218 NA ...
-#&gt;  $ genus          : Factor w/ 26 levels &quot;Ammodramus&quot;,&quot;Ammospermophilus&quot;,..: 13 13 13 13 13 13 13 13 13 13 ...
-#&gt;  $ species        : Factor w/ 40 levels &quot;albigula&quot;,&quot;audubonii&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-#&gt;  $ taxa           : Factor w/ 4 levels &quot;Bird&quot;,&quot;Rabbit&quot;,..: 4 4 4 4 4 4 4 4 4 4 ...
-#&gt;  $ plot_type      : Factor w/ 5 levels &quot;Control&quot;,&quot;Long-term Krat Exclosure&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<div id="inspecting-data.frame-objects" class="section level3">
-<h3>Inspecting <code>data.frame</code> Objects</h3>
-<p>As we mentioned before, it is important to understand your data before analysing it. Furthermore we want to make sure that the data has loaded in R properly. To do that, there are several functions we can use that help us to inspect our data.frame object.</p>
-<p>We already saw how the functions <code>head()</code>, <code>view()</code> and <code>str()</code> can be useful to check the content and the structure of a data frame. Here is a non-exhaustive list of functions to get a sense of the content/structure of the data. Let’s try them out!</p>
-<ul>
-<li>Size:
-<ul>
-<li><code>dim(surveys)</code> - returns a vector with the number of rows in the first element, and the number of columns as the second element (the <strong>dim</strong>ensions of the object)</li>
-<li><code>nrow(surveys)</code> - returns the number of rows</li>
-<li><code>ncol(surveys)</code> - returns the number of columns</li>
-</ul></li>
-<li>Content:
-<ul>
-<li><code>head(surveys)</code> - shows the first 6 rows</li>
-<li><code>tail(surveys)</code> - shows the last 6 rows</li>
-</ul></li>
-<li>Names:
-<ul>
-<li><code>names(surveys)</code> - returns the column names (synonym of <code>colnames()</code> for <code>data.frame</code> objects)</li>
-<li><code>rownames(surveys)</code> - returns the row names</li>
-</ul></li>
-<li>Summary:
-<ul>
-<li><code>str(surveys)</code> - structure of the object and information about the class, length and c content of each column</li>
-<li><code>summary(surveys)</code> - summary statistics for each column</li>
-</ul></li>
-</ul>
-<p>Note: most of these functions are “generic”, they can be used on other types of objects besides <code>data.frame</code>.</p>
-<blockquote>
-<h4 id="challenge">Challenge</h4>
-<p>Based on the output of <code>str(surveys)</code>, can you answer the following questions?</p>
-<ul>
-<li>What is the class of the object <code>surveys</code>?</li>
-<li>How many rows and how many columns are in this object?</li>
-<li>How many taxa have been recorded during these surveys?</li>
-</ul>
-<div class="accordion">
-<h3 class="toc-ignore">
-Answer
-</h3>
-<div style="background: #fff;">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">str</span>(surveys)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">## * class: data frame</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">## * how many rows: 34786,  how many columns: 13</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">## * how many taxa: 4</span></a></code></pre></div>
-</div>
-</div>
-</blockquote>
-</div>
-<div id="indexing-and-subsetting-data-frames" class="section level3">
-<h3>Indexing and subsetting data frames</h3>
-<div id="numeric-indexing" class="section level4">
-<h4>Numeric indexing</h4>
-<p>You can think of a data frame as a table with rows and columns. Each element in the data frame can be indexed by the position of the row and the column in respect to the whole data frame. The index is specified as [R,C] where R is the position of the row (or row number) and C is the position of the column (or column number). <strong>Note that <code>[]</code> are used for indexing, while <code>()</code> are used to call a function</strong>. Indexing in a data frame starts from 1. To be able to extract specific data from the surveys data frame, we need to specify the indices or positions of the elements we want from it. In the image below we zoom into the first three columns and rows of the surveys data frame and show their indexes displayed on top of their values in skyblue.<br />
-<img src="img/indexing_dataframe.svg" /></p>
-<p>The illustration above illustrates how <strong>numeric indexing</strong> works. Below are some examples of how we can retrieve subset of values from the surveys data frame using numeric indexing.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># get first element in the first column of the data frame</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">surveys[<span class="dv">1</span>, <span class="dv">1</span>]   </a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co"># get first element in the 6th column</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">surveys[<span class="dv">1</span>, <span class="dv">6</span>]   </a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co"># get first column of the data frame (as a vector)</span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6">surveys[, <span class="dv">1</span>]    </a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co"># get first three elements in the 7th column (as a vector)</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8">surveys[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">7</span>] </a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co"># get the 3rd row of the data frame (as a data.frame)</span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10">surveys[<span class="dv">3</span>, ]    </a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co"># equivalent to head_surveys &lt;- head(surveys)</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12">head_surveys &lt;-<span class="st"> </span>surveys[<span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, ] </a></code></pre></div>
-<p><code>:</code> is an operator in R that creates a sequence of numeric vectors of integers in increasing or decreasing order, test <code>1:10</code> and <code>10:1</code> for instance. It is equivalent to the function <code>seq(from, to)</code>.</p>
-<p>You can also exclude certain indices of a data frame using the “<code>-</code>” sign:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">surveys[, <span class="dv">-1</span>]          <span class="co"># get the whole data frame, except the first column</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">surveys[<span class="op">-</span><span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">34786</span>), ] <span class="co"># equivalent to head(surveys)</span></a></code></pre></div>
-<p><br/></p>
-</div>
-<div id="name-indexing" class="section level4">
-<h4>Name indexing</h4>
-<p>Data frames can be subset by calling indices (as shown previously), but also by calling their row names and column names directly. This is known as <strong>name indexing</strong>. Below are some example of how we retrieve data from a data frame using column names.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># get species_id column as a vector</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">surveys[, <span class="st">&quot;species_id&quot;</span>]     </a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co"># same as above</span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4">surveys<span class="op">$</span>species_id          </a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co"># get the record_id and species columns for the first three rows</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co"># Note: we are mixing numeric and name indexing here</span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7">surveys[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="kw">c</span>(<span class="st">&quot;record_id&quot;</span>, <span class="st">&quot;species&quot;</span>)] </a></code></pre></div>
-<p>In RStudio, you can use the autocompletion feature to get the full and correct names of the columns.</p>
-<p><br/></p>
-</div>
-<div id="logical-indexing" class="section level4">
-<h4>Logical indexing</h4>
-<p>Another way to retrieve data from a data frame is by <strong>logical indexing</strong>, or in other words, by performing a logical operation on a data frame.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># get all the records that have species as &quot;albigula&quot;</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">surveys[surveys<span class="op">$</span>species <span class="op">==</span><span class="st"> &quot;albigula&quot;</span>,]</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co"># save all the records that have species as &quot;albigula&quot; into a variable</span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4">albigula_data &lt;-<span class="st"> </span>surveys[surveys<span class="op">$</span>species <span class="op">==</span><span class="st"> &quot;albigula&quot;</span>,]</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co"># how many records have species as &quot;albigula&quot; in the surveys data frame?</span></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="kw">nrow</span>(albigula_data)</a></code></pre></div>
-<p>In case you are wondering what a <em>Neotoma albigula</em> is: <a href="https://commons.wikimedia.org/wiki/File:White-throated_woodrat.jpg"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/White-throated_woodrat.jpg" alt="Wikipedia" /></a></p>
-<p><br/></p>
-<blockquote>
-<h4 id="challenge-1">Challenge</h4>
-<ol style="list-style-type: decimal">
-<li><p>Create a <code>data.frame</code> (<code>surveys_200</code>) containing only the data in row 200 of the <code>surveys</code> dataset.</p></li>
-<li><p>Notice how <code>nrow()</code> gave you the number of rows in a <code>data.frame</code>?</p>
-<ul>
-<li>Use that number to pull out just that last row in the data frame.</li>
-<li>Compare that with what you see as the last row using <code>tail()</code> to make sure it’s meeting expectations.</li>
-<li>Pull out that last row using <code>nrow()</code> instead of the row number.</li>
-<li>Create a new data frame (<code>surveys_last</code>) from that last row.</li>
-</ul></li>
-<li><p>Use <code>nrow()</code> to extract the row that is in the middle of the data frame. Store the content of this row in an object named <code>surveys_middle</code>.</p></li>
-<li><p>Combine <code>nrow()</code> with the <code>-</code> notation above to reproduce the behavior of <code>head(surveys)</code>, keeping just the first through 6th rows of the surveys dataset.</p></li>
-</ol>
-<div class="accordion">
-<h3 class="toc-ignore">
-Answer
-</h3>
-<div style="background: #fff;">
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co">## 1.</span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">surveys_<span class="dv">200</span> &lt;-<span class="st"> </span>surveys[<span class="dv">200</span>, ]</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">## 2.</span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co"># Saving `n_rows` to improve readability and reduce duplication</span></a>
-<a class="sourceLine" id="cb14-5" data-line-number="5">n_rows &lt;-<span class="st"> </span><span class="kw">nrow</span>(surveys)</a>
-<a class="sourceLine" id="cb14-6" data-line-number="6">surveys_last &lt;-<span class="st"> </span>surveys[n_rows, ]</a>
-<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">## 3.</span></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8">surveys_middle &lt;-<span class="st"> </span>surveys[n_rows <span class="op">/</span><span class="st"> </span><span class="dv">2</span>, ]</a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">## 4.</span></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10">surveys_head &lt;-<span class="st"> </span>surveys[<span class="op">-</span>(<span class="dv">7</span><span class="op">:</span>n_rows), ]</a></code></pre></div>
-</div>
-</div>
-</blockquote>
-</div>
-</div>
-</div>
-<div id="factors" class="section level2">
-<h2>Factors</h2>
-<p>When we did <code>str(surveys)</code> we saw that several of the columns consist of integers. The columns <code>genus</code>, <code>species</code>, <code>sex</code>, <code>plot_type</code>, … however, are of a special class called <code>factor</code>. Factors are very useful and actually contribute to making R particularly well suited to working with data. So we are going to spend a little time introducing them.</p>
-<p>Factors represent categorical data. They are stored as integers associated with labels and they can be ordered or unordered. While factors look (and often behave) like character vectors, they are actually treated as integer vectors by R. So you need to be very careful when treating them as strings.</p>
-<p>Once created, factors can only contain a pre-defined set of values, known as <em>levels</em>. By default, R always sorts levels in alphabetical order. For instance, if you have a factor with 2 levels:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>))</a></code></pre></div>
-<p>R will assign <code>1</code> to the level <code>&quot;female&quot;</code> and <code>2</code> to the level <code>&quot;male&quot;</code> (because <code>f</code> comes before <code>m</code>, even though the first element in this vector is <code>&quot;male&quot;</code>). You can see this by using the function <code>levels()</code> and you can find the number of levels using <code>nlevels()</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">levels</span>(sex)</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="kw">nlevels</span>(sex)</a></code></pre></div>
-<p>Sometimes, the order of the factors does not matter, other times you might want to specify the order because it is meaningful (e.g., “low”, “medium”, “high”), it improves your visualization, or it is required by a particular type of analysis. Here, one way to reorder our levels in the <code>sex</code> vector would be:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">sex <span class="co"># current order</span></a></code></pre></div>
-<pre><code>#&gt; [1] male   female female male  
-#&gt; Levels: female male</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sex, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>))</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2">sex <span class="co"># after re-ordering</span></a></code></pre></div>
-<pre><code>#&gt; [1] male   female female male  
-#&gt; Levels: male female</code></pre>
-<p>In R’s memory, these factors are represented by integers (1, 2, 3), but are more informative than integers because factors are self describing: <code>&quot;female&quot;</code>, <code>&quot;male&quot;</code> is more descriptive than <code>1</code>, <code>2</code>. Which one is “male”? You wouldn’t be able to tell just from the integer data. Factors, on the other hand, have this information built in. It is particularly helpful when there are many levels (like the species names in our example dataset).</p>
-<div id="converting-factors" class="section level3">
-<h3>Converting factors</h3>
-<p>If you need to convert a factor to a character vector, you use <code>as.character(x)</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">as.character</span>(sex)</a></code></pre></div>
-<p>In some cases, you may have to convert factors where the levels appear as numbers (such as concentration levels or years) to a numeric vector. For instance, in one part of your analysis the years might need to be encoded as factors (e.g., comparing average weights across years) but in another part of your analysis they may need to be stored as numeric values (e.g., doing math operations on the years). This conversion from factor to numeric is a little trickier. The <code>as.numeric()</code> function returns the index values of the factor, not its levels, so it will result in an entirely new (and unwanted in this case) set of numbers. One method to avoid this is to convert factors to characters, and then to numbers.</p>
-<p>Another method is to use the <code>levels()</code> function. Compare:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">year_fct &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="dv">1990</span>, <span class="dv">1983</span>, <span class="dv">1977</span>, <span class="dv">1998</span>, <span class="dv">1990</span>))</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw">as.numeric</span>(year_fct)               <span class="co"># Wrong! And there is no warning...</span></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(year_fct)) <span class="co"># Works...</span></a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="kw">as.numeric</span>(<span class="kw">levels</span>(year_fct))[year_fct]    <span class="co"># The recommended way.</span></a></code></pre></div>
-<p>Notice that in the <code>levels()</code> approach, three important steps occur:</p>
-<ul>
-<li>We obtain all the factor levels using <code>levels(year_fct)</code></li>
-<li>We convert these levels to numeric values using <code>as.numeric(levels(year_fct))</code></li>
-<li>We then access these numeric values using the underlying integers of the vector <code>year_fct</code> inside the square brackets</li>
-</ul>
-</div>
-<div id="renaming-factors" class="section level3">
-<h3>Renaming factors</h3>
-<p>When your data is stored as a factor, you can use the <code>plot()</code> function to get a quick glance at the number of observations represented by each factor level. Let’s look at the number of males and females captured over the course of the experiment:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co">## bar plot of the number of females and males captured during the experiment:</span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="kw">plot</span>(surveys<span class="op">$</span>sex)</a></code></pre></div>
-<p><img src="img/R-ecology-unnamed-chunk-20-1.png" width="672" /></p>
-<p>In addition to males and females, there are about 1700 individuals for which the sex information hasn’t been recorded. Additionally, for these individuals, there is no label to indicate that the information is missing or undetermined. Let’s rename this label to something more meaningful. Before doing that, we’re going to pull out the data on sex and work with that data, so we’re not modifying the working copy of the data frame:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">sex &lt;-<span class="st"> </span>surveys<span class="op">$</span>sex</a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw">head</span>(sex)</a></code></pre></div>
-<pre><code>#&gt; [1] M M        
-#&gt; Levels:  F M</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">levels</span>(sex)</a></code></pre></div>
-<pre><code>#&gt; [1] &quot;&quot;  &quot;F&quot; &quot;M&quot;</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">levels</span>(sex)[<span class="dv">1</span>] &lt;-<span class="st"> &quot;undetermined&quot;</span></a>
-<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="kw">levels</span>(sex)</a></code></pre></div>
-<pre><code>#&gt; [1] &quot;undetermined&quot; &quot;F&quot;            &quot;M&quot;</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">head</span>(sex)</a></code></pre></div>
-<pre><code>#&gt; [1] M            M            undetermined undetermined undetermined
-#&gt; [6] undetermined
-#&gt; Levels: undetermined F M</code></pre>
-<blockquote>
-<h3 id="challenge-2">Challenge</h3>
-<ul>
-<li>Rename “F” and “M” to “female” and “male” respectively.</li>
-<li>Now that we have renamed the factor level to “undetermined”, can you recreate the barplot such that “undetermined” is last (after “male”)?</li>
-</ul>
-<div class="accordion">
-<h3 class="toc-ignore">
-Answer
-</h3>
-<div style="background: #fff;">
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">levels</span>(sex)[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>)</a>
-<a class="sourceLine" id="cb32-2" data-line-number="2">sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sex, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>, <span class="st">&quot;undetermined&quot;</span>))</a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="kw">plot</span>(sex)</a></code></pre></div>
-<img src="img/R-ecology-unnamed-chunk-22-1.png" width="672" />
-</div>
-</div>
-</blockquote>
-</div>
-<div id="using-stringsasfactorsfalse" class="section level3">
-<h3>Using <code>stringsAsFactors=FALSE</code></h3>
-<p>By default, when building or importing a data frame, the columns that contain characters (i.e. text) are coerced (= converted) into factors. Depending on what you want to do with the data, you may want to keep these columns as <code>character</code>. To do so, <code>read.csv()</code> and <code>read.table()</code> have an argument called <code>stringsAsFactors</code> which can be set to <code>FALSE</code>.</p>
-<p>In most cases, it is preferable to set <code>stringsAsFactors = FALSE</code> when importing data and to convert as a factor only the columns that require this data type.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co">## Compare the difference between our data read as `factor` vs `character`.</span></a>
-<a class="sourceLine" id="cb33-2" data-line-number="2">surveys &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb33-3" data-line-number="3"><span class="kw">str</span>(surveys)</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4">surveys &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data_raw/portal_data_joined.csv&quot;</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="kw">str</span>(surveys)</a>
-<a class="sourceLine" id="cb33-6" data-line-number="6"><span class="co">## Convert the column &quot;plot_type&quot; into a factor</span></a>
-<a class="sourceLine" id="cb33-7" data-line-number="7">surveys<span class="op">$</span>plot_type &lt;-<span class="st"> </span><span class="kw">factor</span>(surveys<span class="op">$</span>plot_type)</a></code></pre></div>
-<blockquote>
-<h3 id="challenge-3">Challenge</h3>
-<ol style="list-style-type: decimal">
-<li><p>We have seen how data frames are created when using <code>read.csv()</code>, but they can also be created by hand with the <code>data.frame()</code> function. There are a few mistakes in this hand-crafted <code>data.frame</code>. Can you spot and fix them? Don’t hesitate to experiment!</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">animal_data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">          <span class="dt">animal =</span> <span class="kw">c</span>(dog, cat, sea cucumber, sea urchin),</a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">          <span class="dt">feel =</span> <span class="kw">c</span>(<span class="st">&quot;furry&quot;</span>, <span class="st">&quot;squishy&quot;</span>, <span class="st">&quot;spiny&quot;</span>),</a>
-<a class="sourceLine" id="cb34-4" data-line-number="4">          <span class="dt">weight =</span> <span class="kw">c</span>(<span class="dv">45</span>, <span class="dv">8</span> <span class="fl">1.1</span>, <span class="fl">0.8</span>)</a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">          )</a></code></pre></div></li>
-<li>Can you predict the class for each of the columns in the following example? Check your guesses using <code>str(country_climate)</code>:
-<ul>
-<li>Are they what you expected? Why? Why not?</li>
-<li>What would have been different if we had added <code>stringsAsFactors = FALSE</code> when creating the data frame?</li>
-<li>What would you need to change to ensure that each column had the accurate data type?</li>
-</ul>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">country_climate &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
-<a class="sourceLine" id="cb35-2" data-line-number="2">       <span class="dt">country =</span> <span class="kw">c</span>(<span class="st">&quot;Canada&quot;</span>, <span class="st">&quot;Panama&quot;</span>, <span class="st">&quot;South Africa&quot;</span>, <span class="st">&quot;Australia&quot;</span>),</a>
-<a class="sourceLine" id="cb35-3" data-line-number="3">       <span class="dt">climate =</span> <span class="kw">c</span>(<span class="st">&quot;cold&quot;</span>, <span class="st">&quot;hot&quot;</span>, <span class="st">&quot;temperate&quot;</span>, <span class="st">&quot;hot/temperate&quot;</span>),</a>
-<a class="sourceLine" id="cb35-4" data-line-number="4">       <span class="dt">temperature =</span> <span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">30</span>, <span class="dv">18</span>, <span class="st">&quot;15&quot;</span>),</a>
-<a class="sourceLine" id="cb35-5" data-line-number="5">       <span class="dt">northern_hemisphere =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="st">&quot;FALSE&quot;</span>),</a>
-<a class="sourceLine" id="cb35-6" data-line-number="6">       <span class="dt">has_kangaroo =</span> <span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb35-7" data-line-number="7">       )</a></code></pre></div>
-<div class="accordion">
-<h3 class="toc-ignore">
-Answer
-</h3>
-<div style="background: #fff;">
-<p>
-<ul>
-<li>missing quotations around the names of the animals</li>
-<li>missing one entry in the <code>feel</code> column (probably for one of the furry animals)</li>
-<li>missing one comma in the <code>weight</code> column</li>
-<li><code>country</code>, <code>climate</code>, <code>temperature</code>, and <code>northern_hemisphere</code> are factors; <code>has_kangaroo</code> is numeric</li>
-<li>using <code>stringsAsFactors = FALSE</code> would have made character vectors instead of factors</li>
-<li>removing the quotes in <code>temperature</code> and <code>northern_hemisphere</code> and replacing 1 by TRUE in the <code>has_kangaroo</code> column would give what was probably intended
-</div>
-</div></li>
-</ul>
-</p></li>
-</ol>
-</blockquote>
-<p>The automatic conversion of data type is sometimes a blessing, sometimes an annoyance. Be aware that it exists, learn the rules, and double check that data you import in R are of the correct type within your data frame. If not, use it to your advantage to detect mistakes that might have been introduced during data entry (for instance, a letter in a column that should only contain numbers).</p>
-<p>Learn more in this <a href="https://support.rstudio.com/hc/en-us/articles/218611977-Importing-Data-with-RStudio">RStudio tutorial</a></p>
-</div>
+<p>Learn more about importing data in this <a href="https://support.rstudio.com/hc/en-us/articles/218611977-Importing-Data-with-RStudio">RStudio tutorial</a></p>
 </div>
 
 

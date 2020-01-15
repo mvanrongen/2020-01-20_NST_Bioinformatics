@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -386,6 +385,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -414,6 +414,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -724,9 +730,9 @@ How it should look like at the beginning of this lesson
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] compiler_3.6.0  magrittr_1.5    tools_3.6.0     htmltools_0.4.0
-##  [5] yaml_2.2.0      Rcpp_1.0.3      stringi_1.4.3   rmarkdown_1.16 
-##  [9] highr_0.8       knitr_1.26      stringr_1.4.0   xfun_0.11      
-## [13] digest_0.6.22   rlang_0.4.1     evaluate_0.14</code></pre>
+##  [5] yaml_2.2.0      Rcpp_1.0.3      stringi_1.4.3   rmarkdown_2.0  
+##  [9] highr_0.8       knitr_1.26      stringr_1.4.0   xfun_0.12      
+## [13] digest_0.6.23   rlang_0.4.2     evaluate_0.14</code></pre>
 <p/>
 <p style="padding:0 0 15px 0;">
 <p><strong>Where to ask for help?</strong></p>
