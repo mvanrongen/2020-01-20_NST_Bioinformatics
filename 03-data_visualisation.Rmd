@@ -1,0 +1,186 @@
+---
+title: Data visualisation with tidyverse
+author: Alexia Cardona & Martin van Rongen
+---
+
+```{r, echo=FALSE, purl=FALSE, message = FALSE}
+source("setup.R")
+surveys <- read_csv("data_raw/portal_data_joined.csv")
+suppressWarnings(surveys$date <- lubridate::ymd(paste(surveys$year,
+                                                     surveys$month,
+                                                      surveys$day,
+                                                      sep = "-")))
+```
+
+# Data exploration workflow
+When you are working on a project that requires data analysis, you will normally need to perform the following steps:
+
+<img src="img/data-science-explore.png" width=75%/>)
+
+More information on this workflow can be found in the [R for Data Science](https://r4ds.had.co.nz/) book.  To understand better the workflow in the illustration above, let us go over each stage to see what each step entails:
+
+1.  The first step in working with data is to first **import** your data into R.  This connects the external file/database to your project in R.
+2.  **Cleaning** or **tidying** the data will follow, which involves making sure that the data is consistent and that each row in the dataset is an observation and each column is a variable.  
+_e.g._ In the _surveys_ data frame the _month_ column specifies months as an integer from 1 to 12.  The dataset would have inconsistent data if there was a record in the dataset that had a month specified by name, _e.g._ September rather than 9.  A month of 0 or any other number that is not in the range 1 to 12 would have also made the dataset inconsistent.  Another common problem is capitalisation; the same word in the same column can be written with capitals or without; _e.g._ _Bird_ or _bird_ in the same _taxa_ column is inconsistent data.  During the _tidying_ stage it is important to make the dataset consistent and much as possible so that you can focus on the questions you are trying to solve in your analysis.  
+<!--image showing that each row is an observation and that column is a variable-->
+3.  Once the dataset is tidy, we move to the transformation stage.  To be able to **transform** your data you need to plan in advance what analyses you would like to perform on the dataset and what plots you would like to create.  In this way, you are able to plan ahead what variables/columns you will be using from the dataset, what additional variables you will need to create and what variables you will not be using so that you can keep only the columns in the dataset that are relevant for your analyses.  By the end of the transformation process you will have a dataset that is focused for your analyses and you can move on to the main exploratory mechanisms of this workflow which are visualisation and modelling.  These two stages complement each other and when exploring your data you normally repeat these two stages several times.    
+4.  **Visualising** data is a powerful way to explore your data.  Furthermore it helps you understand if there is any pattern in the data.   
+5.  **Modelling** the data involves applying statistics or other mathematical or computational models on your data to explore if there are correlations or patterns in the dataset to help you answer the scientific question you are trying to solve.  
+6.  The last step in the data exploration workflow is to **communicate** your results.  This is very important as you will need to be able to communicate your results to others to have a successful project.
+
+All these stages in the data exploration workflow can be achieved by programming in R.  In this course we will not look into the _Model_ and _Communicate_ stages of the workflow in this course.  You will be able to learn more about these in the following courses:
+
+* Model:  [Statistics for Biologists in R](https://training.cam.ac.uk/bioinformatics/event/2815748) and [An Introduction to Machine Learning](https://training.cam.ac.uk/bioinformatics/event/3043850) 
+* Communicate: [Reproducible Research with R](https://training.cam.ac.uk/bioinformatics/event/3114638)
+
+In the next sections we will be looking at the _import_, _tidy_, _transform_ and _visualise_ stages of the data exploration workflow by using one of the most popular packages in data science in R; **Tidyverse**.
+
+<!--image of model with tidyverse hexagons under the ones that we will be covering in this course-->
+
+
+
+# Visualising data in R
+
+<img src="img/ggplot2.png" width="50"/>
+
+After inspecting the `surveys` dataset in R, the data looks tidy and we are happy with its format, so let us start understanding better our data by visualising it.  **`ggplot2`** is the visualisation package in `tidyverse` and we will be using this to create some plots.  `ggplot2` is a very popular package used for plotting mainly due to its simple way to create plots from tabular data.  
+
+To create a plot, we will use the following basic template. 
+```
+ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>()
+```
+As you can see there are 3 main elements that you need to create a plot:
+
+The `ggplot` function takes 2 arguments:
+
+* **data**: This is the data frame to attach to the plot.  The data frame must contain the variables to plot as columns and the rows must contain the observations that you need to plot.
+* **mapping**: Aesthetic mappings describe how variables in the data are mapped to visual properties of the plot.  
+
+Using the `ggplot` function on its own will not plot anything. We need to add a **geom_function** as a layer. Layers are added to plots by using `+`.  They are added on top of the other previous layers that might be present.    
+
+* **geom_function**: This specifies the type of plot would you like to plot.  The greatest advantage of this is that you can easily change the plot type by just changing the geom_function and keeping everything else the same.  You can see a whole list of plots that you can plot  [here](https://ggplot2.tidyverse.org/reference/index.html#section-layer-geoms).
+
+Let us practice this on our `surveys` dataset. We would like to create a scatter plot with `weight` on the x-axis, `hindfoot_length` on the y-axis 
+
+```{r}
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length))
+```
+
+## Adding layers
+
+As you can see if you just specify the `ggplot` function with the data and aesthetic mappings, it will just create an empty plot.  Let us now add the geom_function for the scatter plot (`geom_point`) as a layer to the plot:
+<a name="firstplot"></a>
+```{r, message=FALSE, warning=FALSE}
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point()
+```
+
+You can customise some of the visualisations of the plot to extract more information from it.  For instance, we can add transparency (`alpha`) to avoid overplotting:
+
+```{r adding-transparency, message=FALSE, warning=FALSE, fig.show=TRUE}
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+    geom_point(alpha = 0.1)
+```
+
+You can find a list of aesthetics for each type of plot in the [ggplot2 cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf).  
+
+We can also add colours for all the points:
+
+```{r adding-colours, message=FALSE, warning=FALSE, fig.show=TRUE}
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+    geom_point(alpha = 0.1, colour = "blue")
+```
+
+If we would like to try other type of plots on the data, the best thing is to save the ggplot into a variable as below:
+
+```{r, fig.show="hide", message=FALSE, warning=FALSE}
+# Assign plot to a variable
+surveys_plot <- ggplot(data = surveys, 
+                       mapping = aes(x = weight, y = hindfoot_length))
+
+# Draw a scatter plot
+surveys_plot + 
+    geom_point()
+```
+
+Now draw a `geom_smooth` plot.  This plot is good when you need to see if there is any pattern between the two variables being plotted that you would not normally see in a scatter plot due to overplotting.
+```{r, message=FALSE, warning=FALSE}
+surveys_plot +
+    geom_smooth()
+```
+
+Rather than seeing each plot separately, sometimes plotting multiple plots on top of each other is a better way. You can add multiple plots as layers on top of each other as follows:
+
+```{r, message=FALSE, warning=FALSE}
+surveys_plot +
+  geom_point() +
+  geom_smooth()
+```
+
+>**Note**
+>
+>- Anything you put in the `ggplot()` function can be seen by any geom layers that you add (_i.e.,_ these are universal plot settings). 
+>- You can also specify mappings for a given geom independently of the mappings defined globally in the `ggplot()` function.
+>- The `+` sign used to add new layers must be placed at the end of the line containing the *previous* layer. If, instead, the `+` sign is added at the beginning of the line containing the new layer, >**`ggplot2`** will not add the new layer and will return an error message.
+>
+>```{r chunkT, eval=FALSE, purl=FALSE}
+># This is the correct syntax for adding layers
+>surveys_plot +
+  geom_point()
+>
+># This will not add the new layer and will return an error message
+>surveys_plot 
+  + geom_point()
+>```
+
+> ### Challenge 
+>
+> Scatter plots can be useful exploratory tools for small datasets. For data
+> sets with large numbers of observations, such as the `surveys` data
+> set, overplotting of points can be a limitation of scatter plots. We have already seen how we can
+> visualise data better when we have overplotting with the `geom_smooth` plot. Another way 
+> for handling overplotting is to display the density of the data through contours.  As this challenge's task
+> create a script called `plot_density2d.R` which loads the file data_raw/portal_data_joined.csv into the variable `surveys`.  It then uses this dataset to plot the `weight` on the x-axis and `hindfoot_length` on the y-axis in a `geom_density2d` plot.
+>
+> ```{r, fig.show="hide", answer=TRUE, message=FALSE, warning=FALSE, purl=FALSE}
+>library(tidyverse)
+>
+># Load the surveys data
+>surveys <- read_csv("data_raw/portal_data_joined.csv")
+> 
+># Attach data and map x and y axes
+>surveys_plot <- ggplot(data = surveys, 
+>                       mapping = aes(x = weight, y = hindfoot_length))
+># Draw geom_density2d
+>surveys_plot +
+> geom_density2d()
+>```
+
+
+## Saving a plot to a file {#saveplot}
+
+To save a plot to file use the `ggsave` function.  If you look at the [documentation of ggsave](https://ggplot2.tidyverse.org/reference/ggsave.html) you can see the different arguments the ggsave function takes.  Let us save the plot present in the surveys_plot variable into a file called `plot_weight_hindfoot_density2d.png` into a folder in this project called `img_output`.  
+```{r, warning=FALSE, message=FALSE}
+#save plot that you would like to save into a variable
+out_plot <- surveys_plot + geom_density2d()
+#save plot to file
+ggsave(filename="img_output/plot_weight_hindfoot_density2d.png", plot = out_plot)
+```
+
+>**Note**
+>
+>- You do not need to save the plot into a variable before saving it to file.  If you do not specify the `plot` argument of the `ggsave` function, `ggsave` will take the last plot that you plotted and save it into the `filename` specified.
+>```{r, warning=FALSE, message=FALSE}
+># Save plot to file
+>ggsave(filename = "img_output/plot_weight_hindfoot_density2d.png")
+>```
+>
+>- You can create folders straight from RStudio from the right bottom pane in the Files section > New Folder icon.
+>
+><img src="img/new_folder.png" width="200"/>
+
+<br/>
+
+
+
+
