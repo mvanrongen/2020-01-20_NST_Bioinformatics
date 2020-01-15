@@ -201,19 +201,16 @@ needs, but these should form the backbone of your working directory.
 ![Example of a working directory structure.](img/working-directory-structure.png)
 
 
-For this workshop, we will need a `data/` folder to store our raw data, and we
-will use `data_output/` for when we learn how to export data as CSV files, and
-`fig_output/` folder for the figures that we will save.
+For this workshop, we will need a `data_raw` folder to store our raw data, and we
+will use `data_processed` for when we learn how to export data as CSV files, and
+`fig_output/` folder for the figures that we will save. For this course the necessary folders have been created already, but if you want to add new folders yourself you can do the following:
 
-* Under the `Files` tab on the right of the screen, click on `New Folder` and
-  create a folder named `data` within your newly created working directory
-  (e.g., `~/my-first-project/data`). Repeat these operations to create a `data_output/` and a
-  `fig_output` folders.
+* Under the `Files` tab on the right of the screen, click on `New Folder` to create a folder within your newly created working directory (e.g., `~/my-first-project/data`).
 
 We are going to keep the script in the root of our working directory because we
 are only going to use one file and it will make things easier.
 
-Your working directory should now look like this:
+Your working directory should now along the lines of this:
 
 ```{r, results='markup',fig.cap="How it should look like at the beginning of this lesson", echo=FALSE, purl=FALSE, out.width='50%', fig.align='center'}
 knitr::include_graphics("img/workingdir-files.png")
