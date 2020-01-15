@@ -73,16 +73,24 @@ surveys <- read_csv("data_raw/portal_data_joined.csv")
 ```
 
 This statement doesn't produce any output because, as you might recall,
-assignments don't display anything. If we want to check that our data has been
-loaded, we can see the contents of the data frame by typing its name: `surveys`.
+assignments don't display anything. It does give you information on how the data was loaded.
+Note that some columns are classed as `col_double` (whole numbers) and others as `col_character` (text).
+This can be useful and important information, because it tells you how R views the data. It also helps you check your data. For example, if R would view a column as `col_character` but you know that it should only contain numbers, then you know something has probably gone wrong during the data collection.
 
-This shows that `surveys` is an object called a **tibble**, which is tidyverse's way of dealing with tables. What we need to know about this at the moment is that it prints things a bit nicer on our screens. Note that only the first few rows of the `surveys` data frame were printed (we would not like to see 30,000+ rows printed on our screen!).
+If we want to have a closer look as to how our data has been
+loaded, we can visualise the contents of the data frame by typing its name: `surveys`:
+
+```{r, eval=TRUE, results=TRUE, purl=FALSE}
+surveys
+```
+
+This shows that `surveys` is an object called a **tibble**, which is a tidyverse wrapper around a data frame. What we need to know about this is that it prints things a bit nicer on our screens than would be the case with a regular data frame object. Notice that only the first few rows of the `surveys` data frame were printed, whereas with a regular dataframe _all_ of the data would have been printed (and we would have had 34,786 rows printed on our screen!).
 
 ## Data frames
 
-Data frames are another data structure in R which is most widely used in the R programming world.  It is very popular as most of the data is readily available in tabular form and it is the also the data structure used when plotting and performing most analyses in R.
+Data frames are one of the most widely used type of data structure in R.  It is very popular as most of the data is readily available in tabular form and it is the also the data structure used when plotting and performing most analyses in R.
 
-A data frame can be compared to what you would see in an Excel spreadsheet. A rectangular data set.
+A data frame can be compared to what you would see in an Excel spreadsheet: a rectangular data set.
 
 A data frame is the representation of data in the format of a table where the
 columns are vectors that all have the same length. Because columns are
