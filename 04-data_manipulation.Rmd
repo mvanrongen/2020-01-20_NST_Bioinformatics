@@ -481,88 +481,6 @@ ggplot(data = yearly_sex_counts,
 
 <br/>
 
-## Customisation
-
-Though the default visualisation of `ggplot2` plots is already at a good standard, there are several ways one can improve even further the visualisations.  
-
-### Labels
-
-Let us start customising the last plot we have plotted by renaming the axes and adding a title to the plot.  This is done by using the [`labs`](https://ggplot2.tidyverse.org/reference/labs.html) function:
-
-```{r, fig.show=TRUE}
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n)) +
-  geom_line() +
-  facet_grid(cols = vars(genus)) +
-  labs(title = "Observed genera through time",
-       x = "Year of observation",
-       y = "Number of animals")
-```
-         
-The major item that needs fixing in the plot is the text on the x-axis as this crammed and is not readable at the moment. This is mainly due to the fact that the size of the plot is dependent on the size of the window (in this case RStudio).  You can work around this by saving your plot to a file and specifying the width of the plot ([see Saving a plot to a file section](#saveplot)). **Themes** in the `ggplot2` package control the display of all non-data elements of the plot.  Let us start customising the text on the x-axis by changing its size and position using the `theme` function.  Note that `theme()` has several other arguments and you can read more about them in the [`theme()` documentation](https://ggplot2.tidyverse.org/reference/theme.html).
-
-```{r, fig.show=TRUE}         
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
-    geom_line() +
-    facet_grid(cols = vars(genus)) +
-    labs(title = "Observed genera through time",
-         x = "Year of observation",
-         y = "Number of animals")  +
-    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
-          axis.text.y = element_text(size = 7), 
-          strip.text=element_text(size = 7, angle = 45))
-```
-         
-         
-### Legend
-
-With the plot already looking better, the last thing we would like to change is the legend.  Legends are very tricky in `ggplot2` as the fuction to use is determined by the data that is being displayed.  In this case the legend has been created based on colour groupings.  Therefore we can change the lengend title, categories and colour as follows:
-
-```{r, fig.show=TRUE}         
-ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
-    geom_line() +
-    facet_grid(cols = vars(genus)) +
-    labs(title = "Observed genera through time",
-         x = "Year of observation",
-         y = "Number of animals")  +
-    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
-          axis.text.y = element_text(size = 7), 
-          strip.text = element_text(size = 7, angle = 45)) +
-    scale_colour_brewer("Sex", 
-                       palette = "Set1", 
-                       breaks = c("F", "M"), 
-                       labels = c("Female", "Male"))
-```
-
->Note: If you would like to see what other palettes are available please see [http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3](http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3).
-
-### Themes
-
-`ggplot2` has a set of themes that can be used to change the overall appearance of the graph without much effort. For example, if we create the [first plot](#firstplot) again and apply the `theme_bw()` theme we get a more simpler white background:
-```{r, fig.show=TRUE, warning=FALSE, message=FALSE}
-ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
-  geom_point() +
-  theme_bw()
-```
-
-A list of themes can be found in the [`ggplot2` documentation](https://ggplot2.tidyverse.org/reference/index.html#section-themes).  
-
->### Challenge
->
->Use what you just learned to create a plot that depicts how the average weight of each species changes through the years.
->
->```{r, answer=TRUE, fig.show=TRUE}
->surveys_complete %>%
-  group_by(year, species) %>%
-  summarise(avg_weight = mean(weight)) %>%
-  ggplot(mapping = aes(x = year, y = avg_weight)) +
-    geom_line() +
-    facet_wrap(facets = vars(species)) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
->```
-
-<br/>
-
 # Exporting/Writing data to files
 
 Now that you have learned how to use **`dplyr`** to transform your raw data, you may want to export these new datasets to share them with your collaborators or for archival.
@@ -828,5 +746,87 @@ Joining of tables is done using the **mutating join** functions in [`dplyr` docu
 In this case we want to join the data by `genus`, so we use `by = genus` as the common key.
 
 ![](img/join_examples.png)
+
+<br/>
+
+## Customisation of plots
+
+Though the default visualisation of `ggplot2` plots is already at a good standard, there are several ways one can improve even further the visualisations.  
+
+### Labels
+
+Let us start customising the last plot we have plotted by renaming the axes and adding a title to the plot.  This is done by using the [`labs`](https://ggplot2.tidyverse.org/reference/labs.html) function:
+
+```{r, fig.show=TRUE}
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n)) +
+  geom_line() +
+  facet_grid(cols = vars(genus)) +
+  labs(title = "Observed genera through time",
+       x = "Year of observation",
+       y = "Number of animals")
+```
+         
+The major item that needs fixing in the plot is the text on the x-axis as this crammed and is not readable at the moment. This is mainly due to the fact that the size of the plot is dependent on the size of the window (in this case RStudio).  You can work around this by saving your plot to a file and specifying the width of the plot ([see Saving a plot to a file section](#saveplot)). **Themes** in the `ggplot2` package control the display of all non-data elements of the plot.  Let us start customising the text on the x-axis by changing its size and position using the `theme` function.  Note that `theme()` has several other arguments and you can read more about them in the [`theme()` documentation](https://ggplot2.tidyverse.org/reference/theme.html).
+
+```{r, fig.show=TRUE}         
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
+    geom_line() +
+    facet_grid(cols = vars(genus)) +
+    labs(title = "Observed genera through time",
+         x = "Year of observation",
+         y = "Number of animals")  +
+    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
+          axis.text.y = element_text(size = 7), 
+          strip.text=element_text(size = 7, angle = 45))
+```
+         
+         
+### Legend
+
+With the plot already looking better, the last thing we would like to change is the legend.  Legends are very tricky in `ggplot2` as the fuction to use is determined by the data that is being displayed.  In this case the legend has been created based on colour groupings.  Therefore we can change the lengend title, categories and colour as follows:
+
+```{r, fig.show=TRUE}         
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, colour = sex)) +
+    geom_line() +
+    facet_grid(cols = vars(genus)) +
+    labs(title = "Observed genera through time",
+         x = "Year of observation",
+         y = "Number of animals")  +
+    theme(axis.text.x = element_text(size = 7, angle = 90, vjust = 0.5), 
+          axis.text.y = element_text(size = 7), 
+          strip.text = element_text(size = 7, angle = 45)) +
+    scale_colour_brewer("Sex", 
+                       palette = "Set1", 
+                       breaks = c("F", "M"), 
+                       labels = c("Female", "Male"))
+```
+
+>Note: If you would like to see what other palettes are available please see [http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3](http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=3).
+
+### Themes
+
+`ggplot2` has a set of themes that can be used to change the overall appearance of the graph without much effort. For example, if we create the [first plot](#firstplot) again and apply the `theme_bw()` theme we get a more simpler white background:
+```{r, fig.show=TRUE, warning=FALSE, message=FALSE}
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point() +
+  theme_bw()
+```
+
+A list of themes can be found in the [`ggplot2` documentation](https://ggplot2.tidyverse.org/reference/index.html#section-themes).  
+
+>### Challenge
+>
+>Use what you just learned to create a plot that depicts how the average weight of each species changes through the years.
+>
+>```{r, answer=TRUE, fig.show=TRUE}
+>surveys_complete %>%
+  group_by(year, species) %>%
+  summarise(avg_weight = mean(weight)) %>%
+  ggplot(mapping = aes(x = year, y = avg_weight)) +
+    geom_line() +
+    facet_wrap(facets = vars(species)) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+>```
 
 <br/>
