@@ -401,24 +401,32 @@ There are two types of `facet` functions:
 - `facet_wrap()` arranges the different plots into muliple rows and columns to cleanly fit on one page.
 - `facet_grid()` plots all the categories in 1 row or 1 column.
 
-Let us see this in action.  When we plotted a [time series plot](#timeseries), we created a line for each different genus.  Given there are several genera, it would be more clearer if we plotted each line is a seperate plot, one plot for each genus.  Facetting will do this very easily.  Let us start with `facet_wrap()`.  We supply the variable that we would like to group upon within `vars()` as following:
+Let us see this in action.
 
 ```{r, fig.show=TRUE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+surveys_complete %>% 
+  group_by(year, genus) %>% 
+  count() %>% 
+
+ggplot(mapping = aes(x = year, y = n)) +
     geom_line() +
     facet_wrap(facets = vars(genus))
 ```
 
 As you can see, each genus has been plotted as a separate plot.  It is now clear which are the genera that were observed the most.  Another advantage of facetting is that it uses a common axes and all plots are aligned to the same values on the axes, making the different plots comparable.  If you want to have different axes for each plot you can do so by using the `scales` argument.  
 ```{r, fig.show=TRUE}
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+surveys_complete %>% 
+  group_by(year, genus) %>% 
+  count() %>% 
+
+ggplot(mapping = aes(x = year, y = n)) +
     geom_line() +
     facet_wrap(facets = vars(genus), scales = "free")
 ```
 
 The pattern of the graphs that before were hardly visible, *e.g.,* Baiomys, is now clear as the axes have been rescaled to fit the data.  This is the main advantage of using **free scales**.  The disadvantage is that the different plots are not comparable as before.  
 
-If we would like to see if there is any difference between the `sex`, we can do this by adding `sex` as another grouping to `count()`.
+If we would like to see if there is any difference between the `sex`, we can do this by adding `sex` as another grouping to `count()`. Let's assign it to an object `yearly_sex_counts`.
 ```{r}
 yearly_sex_counts <- surveys_complete %>%
                       count(year, genus, sex)
@@ -438,7 +446,11 @@ Let us do the same thing with `facet_grid()` so that we can understand the diffe
 
 <a name="facet_grid_row"></a>
 ```{r, fig.show=TRUE} 
-ggplot(data = yearly_counts, mapping = aes(x = year, y = n)) +
+surveys_complete %>% 
+  group_by(year, genus) %>% 
+  count() %>% 
+  
+ggplot(mapping = aes(x = year, y = n)) +
     geom_line() +
     # Display the genera as columns
     facet_grid(cols = vars(genus))
