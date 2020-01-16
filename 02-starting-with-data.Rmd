@@ -10,6 +10,10 @@ source("setup.R")
 
 <br/>
 
+Before we start, I want to emphasise that although the data used in this course are from an ecological study, the principals you learn can be applied to any analysis of tabular data. For example, we will learn how to **group** data based on `taxa` and **calculate** mean values for `weight` after **filtering** for certain `year` values.
+
+In your own analysis you might be doing something very similar. Let's say you've performed an RNAseq experiment and have done some differential gene expression analysis. This will leave you with a set of files containing expression data that needs further exploring.  Here you might **group** data based on `genotype` and **calculate** mean `counts` after **filtering** for certain `candidate_genes`.
+
 # Data exploration workflow
 When you are working on a project that requires data analysis, you will normally need to perform the following steps:
 
