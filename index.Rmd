@@ -29,7 +29,8 @@ This course is designed for participants with no programming experience.
 1. [Getting started](00-getting-started.html)
 2. [Introduction to R programming](01-intro-to-r.html)
 3. [Starting with data](02-starting-with-data.html)
-4. [Data manipulation and visualisation in tidyverse](03-tidyverse.html)
+4. [Data visualisation](03-data_visualisation.html)
+5. [Data manipulation](04-data_manipulation.html)
 
 <br/>
 
