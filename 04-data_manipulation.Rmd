@@ -258,24 +258,10 @@ As you can see from the result returned, the animals with the smallest weight ar
 ## Summarising data
 
 Creating summaries of your data would be a good way to start describing the variable you are working with.  Summary statistics are a good example of how one can summarise data.  We will not cover details about summary statistics in this course, but we will look at how we can summarise data in R. 
-When working with continuous variables, one of the most popular summary statistic is the mean.  If we try to caclulate the mean on `weight` in the `surveys_complete` dataset we get:
-
-```{r, error=TRUE}
-surveys_complete %>%
-  mean_weight = mean(weight)
-```
-This is because in `dplyr` you will need to use the `summarise` function to be able to create summaries of your data.  
-
-### Summarise 
-The `summarise` function is used when you want to reduce multiple values in your columns to a single value.  If we try to calculate the mean using `summarise()` this time:
-```{r, results=TRUE}
-surveys_complete %>%
-  summarise(mean_weight = mean(weight))
-```
-As seen from the result, the `mean` of the values present in the `weight` column is 41.8.  
 
 ### Frequency - `count`
-Obtaining the frequency of your data is another common way of summarising data.  Frequencies are normally calculated when working with discrete variables that have a finite number of values, such as categorical data.  In our `surveys_complete` dataset, let us obtain the frequecies of male and female animals present.  We can do this by counting the number of "M" and "F" present in the dataset.  To do this use the `dplyr` function `count` as follows:
+
+The most straightforward summary data is counting the the number of observations or frequencies. Frequencies are normally calculated when working with discrete variables that have a finite number of values, such as categorical data.  In our `surveys_complete` dataset, let us obtain the frequecies of male and female animals present.  We can do this by counting the number of "M" and "F" present in the dataset.  To do this use the `dplyr` function `count` as follows:
 
 ```{r, results=TRUE}
   surveys_complete %>%
@@ -309,7 +295,7 @@ surveys_complete %>%
 
 <br/>
 
-## Plotting histograms
+### Plotting histograms
 
 If you would like to plot the distribution of a **single continuous variable** the frequency will be automatically calculated, so you do not need to use `count()` to calculate the frequency beforehand.  The x-axis is automatically divided into bins and the number of observations of the continuous variable in each bin is shown as a bar in the histogram.  In the `ggplot2` package a histogram can be plotted using the `geom_histogram` function.  
 
@@ -329,6 +315,23 @@ ggplot(surveys_complete, aes(weight, fill = sex)) +
 Note that the default number of bins in a histogram is 30.  To get have a granular display you can increase the number of bins by using the argument `bins` in the `geom_histogram` function as above.
 
 There are other plots that can be used for a single continuous variable (see ONE VARIABLE continuous section on [ggplot2 cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)).
+
+### Summarising data with `summarise()`
+
+When working with continuous variables, one of the most popular summary statistic is the mean.  If we try to caclulate the mean on `weight` in the `surveys_complete` dataset we get an error:
+
+```{r, error=TRUE}
+surveys_complete %>%
+  mean_weight = mean(weight)
+```
+This is because in `dplyr` you will need to use the `summarise` function to be able to create summaries of your data. 
+
+The `summarise` function is used when you want to reduce multiple values in your columns to a single value.  If we try to calculate the mean using `summarise()` this time:
+```{r, results=TRUE}
+surveys_complete %>%
+  summarise(mean_weight = mean(weight))
+```
+As seen from the result, the `mean` of the values present in the `weight` column is 41.8. This value is the mean of `weight` of the entire data set. We already know that there are many different groups within the data set, so this is not very informative. It would therefore be good to calculate `mean` values for groups within the data. We cover how to do this next.
 
 ## Grouping data
 In the examples above we learnt how to summarise data over all observations, *e.g.,* we calculated the mean over all observations using the `summarise` function. However, in data analysis, especially when dealing with big data, a common approach to data exploration is the [**split-apply-combine**](https://www.jstatsoft.org/article/view/v040i01) strategy. The idea behind this strategy is to split the data into more managable pieces, apply any operations required on the data independently on each piece and then combine the results together. The figure below illustrates the approach that is done in the split-apply-combine approach.
